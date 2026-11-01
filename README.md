@@ -1,9 +1,9 @@
 <!-- markdownlint-disable MD033 -->
 <div align="center">
 
-# Falcons Vôlei — Gestão de Atlética
+# TimeOn — Gestão de Times
 
-**Sistema de gestão do time de vôlei da Atlética FAP: elenco, escalação, jogos e estatísticas.**
+**Plataforma de gestão de times: elenco, escalação, jogos e estatísticas. Hoje com o Falcons Vôlei (Atlética FAP); vôlei, futsal, futebol e basquete em evolução.**
 
 [![Site](https://img.shields.io/badge/site-online-FFFFFF?style=for-the-badge&labelColor=0B0B0B)](https://falcons-painel.vercel.app)
 
@@ -20,14 +20,14 @@
 
 ## Sobre
 
-Painel profissional de gestão esportiva para o time de vôlei da Atlética FAP, em tema escuro. Centraliza a leitura do elenco, a agenda competitiva e o desempenho individual para apoiar as decisões da comissão técnica em treinos e campeonatos. O sistema guarda dados pessoais dos atletas, por isso o acesso é restrito a usuários autenticados e todas as escritas passam por uma API própria com validação.
+O **TimeOn** é uma plataforma profissional de gestão esportiva, em tema escuro. O primeiro time é o Falcons Vôlei, da Atlética FAP; a base está sendo preparada para vários times e esportes. Centraliza a leitura do elenco, a agenda competitiva e o desempenho individual para apoiar as decisões da comissão técnica em treinos e campeonatos. O sistema guarda dados pessoais dos atletas, por isso o acesso é restrito a usuários autenticados e todas as escritas passam por uma API própria com validação.
 
 ## Links
 
 | | |
 |---|---|
 | Sistema publicado | https://falcons-painel.vercel.app |
-| Repositório | https://github.com/dutrathiagodev/Falcons |
+| Repositório | https://github.com/dutrathiagodev/timeon-gestor-de-times |
 | LinkedIn | [dutrathiagodev](https://www.linkedin.com/in/dutrathiagodev/) |
 | GitHub | [dutrathiagodev](https://github.com/dutrathiagodev) |
 
@@ -62,6 +62,10 @@ Regras completas e checklist de PR em [`docs/architecture/feature.security.md`](
 | `/api/auth/login`, `/api/auth/logout` | `POST` | sessão via Supabase Auth |
 
 Para criar um recurso novo, registre a tabela e as colunas permitidas em `src/lib/api.ts` (`resources`).
+
+## Identidade visual
+
+Marca, cores e tipografia (Sora) em [`docs/architecture/feature.design.md`](docs/architecture/feature.design.md). A logo é o componente `BrandLogo`; o "O" é a bola do esporte.
 
 ## Tecnologias
 

@@ -1,25 +1,22 @@
 import type { Metadata } from "next";
-import { DM_Sans, Oswald } from "next/font/google";
+import { Sora } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import Sidebar from "@/components/layout/sidebar";
 import { SidebarProvider } from "@/components/layout/sidebar-context";
 import { cn } from "@/lib/utils";
 
-const oswald = Oswald({
-  variable: "--font-heading",
+// Brand typeface (from the TimeOn logo). Self-hosted by next/font: no request to Google at runtime.
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
-});
-
-const dmSans = DM_Sans({
-  variable: "--font-body",
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: "Falcons Volei | Gestao da Atletica",
+  title: "TimeOn | Gestao de times",
   description:
-    "Plataforma para gerenciar elenco, estatisticas, jogos e escalacoes da Atletica Falcons.",
+    "Plataforma para gerenciar times, elenco, jogos, estatisticas e escalacoes.",
 };
 
 export default function RootLayout({
@@ -28,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={cn(oswald.variable, dmSans.variable)}>
+    <html lang="pt-BR" className={cn(sora.variable)}>
       <body>
         <SidebarProvider>
           <Sidebar />

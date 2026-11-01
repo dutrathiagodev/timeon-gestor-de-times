@@ -1,6 +1,6 @@
-# Feature Spec - Arquitetura Padrao (Falcons Volei)
+# Feature Spec - Arquitetura Padrao (TimeOn)
 
-Documento normativo do sistema de gestao do time de volei Falcons: cadastro de atletas, escalacao, jogos e estatisticas.
+Documento normativo do TimeOn, plataforma de gestao de times (hoje o Falcons Volei): cadastro de atletas, escalacao, jogos e estatisticas.
 
 ![Tela principal do painel](../images/tela-principal.png)
 

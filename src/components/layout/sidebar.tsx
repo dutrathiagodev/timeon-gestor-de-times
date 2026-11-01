@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { BrandLogo } from "@/components/ui/brand-logo";
 import { usePathname, useRouter } from "next/navigation";
 import { useSidebar } from "./sidebar-context";
 import {
@@ -82,20 +82,8 @@ export default function Sidebar() {
       <aside className={cn("app-sidebar", isOpen ? "is-open" : "is-collapsed")}>
         <div className="sidebar-shell">
           <div className="sidebar-brand">
-            <div className="sidebar-brand-mark">
-              <Image
-                src="/falcons-logo.png"
-                alt="Logo Falcons Volei"
-                width={36}
-                height={36}
-                className="sidebar-brand-logo"
-                priority
-              />
-            </div>
-            <div className="sidebar-brand-copy">
-              <strong>Falcons Volei</strong>
-              <span>Atletica FAP</span>
-            </div>
+            <BrandLogo className="sidebar-brand-wordmark" />
+            <span className="sidebar-brand-tagline">Gestao de times</span>
           </div>
 
           <div className="sidebar-section-label">Navegacao</div>
