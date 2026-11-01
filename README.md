@@ -9,7 +9,7 @@
 **Gestão de times: elenco, escalação, jogos e estatísticas.**
 Hoje com o Falcons Vôlei (Atlética FAP); vôlei, futsal, futebol e basquete em evolução.
 
-[![Site](https://img.shields.io/badge/site-online-FF6A1A?style=for-the-badge&labelColor=101217)](https://timeon-gestor-de-times.vercel.app)
+[![Site](https://img.shields.io/badge/site-online-FF6A1A?style=for-the-badge&labelColor=101217)](https://timeon-painel.vercel.app)
 
 ![Next.js](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-149ECA?logo=react&logoColor=white)
@@ -30,7 +30,7 @@ O **TimeOn** é uma plataforma profissional de gestão esportiva, em tema escuro
 
 | | |
 |---|---|
-| Sistema publicado | https://timeon-gestor-de-times.vercel.app |
+| Sistema publicado | https://timeon-painel.vercel.app |
 | Repositório | https://github.com/dutrathiagodev/timeon-gestor-de-times |
 | LinkedIn | [dutrathiagodev](https://www.linkedin.com/in/dutrathiagodev/) |
 | GitHub | [dutrathiagodev](https://github.com/dutrathiagodev) |
