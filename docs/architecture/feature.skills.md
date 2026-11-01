@@ -1,6 +1,6 @@
 # Feature Skills - Next.js + Supabase
 
-Guia pratico para evoluir o sistema de gestao do time Falcons (atletas, escalacao, jogos e estatisticas) sem quebrar a arquitetura nem a seguranca.
+Guia pratico para evoluir o sistema de gestao de times do TimeOn (atletas, escalacao, jogos e estatisticas) sem quebrar a arquitetura nem a seguranca.
 
 ## Objetivo
 
@@ -99,4 +99,5 @@ Documentacao detalhada:
 
 - [Spec](feature.spec.md)
 - [Seguranca e protecao de dados](feature.security.md)
+- [Design system e marca TimeOn](feature.design.md)
 - [Template de criacao do projeto](feature.template.md)

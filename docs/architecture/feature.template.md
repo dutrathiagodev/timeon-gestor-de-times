@@ -1,6 +1,6 @@
 # Feature Template (Scaffold)
 
-Passo a passo para montar o projeto de gestao do time de volei Falcons do zero, ou para recriar o ambiente em outra maquina.
+Passo a passo para montar o projeto TimeOn do zero, ou para recriar o ambiente em outra maquina.
 
 > Todo o codigo fica dentro de `src/`. Na raiz ficam apenas `public/`, `docs/`, `supabase/`, configs e `package.json`.
 
@@ -17,8 +17,8 @@ Passo a passo para montar o projeto de gestao do time de volei Falcons do zero, 
 Pre-requisito: Node.js 20 ou superior.
 
 ```bash
-git clone https://github.com/dutrathiagodev/Falcons.git
-cd Falcons
+git clone https://github.com/dutrathiagodev/timeon-gestor-de-times.git
+cd timeon-gestor-de-times
 npm install
 ```
 
