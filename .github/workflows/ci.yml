@@ -32,3 +32,11 @@ jobs:
           # Valores falsos: o build nao acessa o banco. Nao use segredos reais aqui.
           NEXT_PUBLIC_SUPABASE_URL: https://example.supabase.co
           NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ci-placeholder
+
+  rls:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Testes de RLS (Postgres 17 em Docker)
+        run: bash supabase/tests/run-local.sh

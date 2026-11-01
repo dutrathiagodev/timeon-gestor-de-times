@@ -33,6 +33,8 @@ O sistema guarda dados pessoais de atletas (CPF, telefone, data de nascimento, p
 - toda tabela nova: `ENABLE ROW LEVEL SECURITY` + policy `TO authenticated`.
 - proibido `USING (true)` para `anon` e `GRANT` para `anon`.
 - migration que mexe em policy deve ser revisada como codigo de seguranca.
+- tabela por time/organizacao: a policy usa `(select private.can_read_team(...))`, `can_write_team` ou `has_org_role`; funcoes `SECURITY DEFINER` ficam no schema `private` com `search_path` vazio.
+- toda mudanca de RLS ganha caso positivo e negativo em `supabase/tests/` (rode `bash supabase/tests/run-local.sh`; o CI roda o mesmo).
 
 3. API
 
@@ -65,6 +67,7 @@ O sistema guarda dados pessoais de atletas (CPF, telefone, data de nascimento, p
 ## Checklist de PR
 
 - [ ] Tabela nova tem RLS e policy `TO authenticated`
+- [ ] Policy nova usa `private.can_*` / `has_org_role` e tem teste em `supabase/tests/`
 - [ ] Recurso novo esta em `resources` com colunas minimas
 - [ ] Rota nova chama `authorize()` e usa `pickFields`
 - [ ] Nenhum `createBrowserClient` ou chave secreta no cliente
