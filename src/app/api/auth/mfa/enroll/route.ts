@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
 
   const { data, error } = await auth.supabase.auth.mfa.enroll({
     factorType: "totp",
-    friendlyName: "Falcons",
+    friendlyName: "TimeOn",
   });
 
   if (error) {

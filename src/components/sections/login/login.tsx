@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import Image from "next/image";
+import { BrandLogo } from "@/components/ui/brand-logo";
 import { useRouter } from "next/navigation";
 import { LockKeyhole, ShieldCheck } from "lucide-react";
 import { apiRequest } from "@/lib/api-client";
@@ -63,11 +63,8 @@ export default function Login({ initialStep }: { initialStep: "password" | "code
     <div className="auth-shell">
       <div className="auth-card">
         <div className="auth-brand">
-          <Image src="/falcons-logo.png" alt="" width={48} height={48} className="auth-brand-logo" priority />
-          <div>
-            <strong>Falcons Volei</strong>
-            <span>Atletica FAP</span>
-          </div>
+          <BrandLogo className="auth-brand-wordmark" />
+          <span>Gestao de times</span>
         </div>
 
         {step === "password" ? (
