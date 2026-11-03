@@ -6,7 +6,7 @@ with
 new_tables(tbl) as (values
   ('sports'), ('sport_positions'), ('organizations'), ('org_memberships'), ('teams'),
   ('team_staff'), ('team_players'), ('team_invites'), ('team_join_requests'),
-  ('invite_attempts'), ('audit_events'), ('athletes'), ('team_members'), ('athlete_private')
+  ('invite_attempts'), ('audit_events'), ('athletes'), ('team_members'), ('athlete_private'), ('games')
 ),
 expected(tbl, priv) as (values
   ('sports', 'SELECT'), ('sport_positions', 'SELECT'),
@@ -18,6 +18,7 @@ expected(tbl, priv) as (values
   ('team_join_requests', 'SELECT'),
   ('team_members', 'SELECT'), ('team_members', 'DELETE'),
   ('athletes', 'SELECT'),
+  ('games', 'SELECT'), ('games', 'INSERT'), ('games', 'UPDATE'), ('games', 'DELETE'),
   ('audit_events', 'SELECT')
 ),
 privs(priv) as (values ('SELECT'), ('INSERT'), ('UPDATE'), ('DELETE'), ('TRUNCATE'), ('REFERENCES'), ('TRIGGER')),
