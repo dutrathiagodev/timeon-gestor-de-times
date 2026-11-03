@@ -6,6 +6,7 @@ import {
   lineupIssues,
   placeAthlete,
   removeAthlete,
+  reseatLineup,
   rotateVolleyball,
   slotOf,
   volleyballRotations,
@@ -194,7 +195,7 @@ describe("lineup: alertas", () => {
   it("funciona no futebol de campo", () => {
     const field = getSport("football_field");
     const f = field.formations[0];
-    const lineup = { ...emptyLineup(f), gk: "g", r3_1: "g2" };
+    const lineup = { ...emptyLineup(f), gk: "g", r3_2: "g2" };
     const athletes = [
       { id: "g", positionKey: "striker" },
       { id: "g2", positionKey: "striker" },
@@ -202,5 +203,54 @@ describe("lineup: alertas", () => {
     const issues = lineupIssues(field, f, lineup, athletes);
     expect(issues.map((i) => i.slotKey)).toEqual(["gk"]);
     expect(issues[0].message).toContain("Centroavante");
+  });
+});
+
+describe("formações e troca de esquema", () => {
+  const futsal = getSport("futsal");
+  const field = getSport("football_field");
+  const hints = (f: (typeof futsal.formations)[number]) => f.slots.map((slot) => slot.positionHint);
+
+  it("futsal abre em 1-2-1: goleiro, fixo, dois alas e pivô", () => {
+    expect(futsal.formations[0].label).toBe("1-2-1");
+    expect(hints(futsal.formations[0]).sort()).toEqual(["ala", "ala", "fixo", "goalkeeper", "pivo"]);
+  });
+
+  it("futebol abre em 4-3-3 com dois laterais e dois zagueiros", () => {
+    const f = field.formations[0];
+    expect(f.label).toBe("4-3-3");
+    expect(f.slots).toHaveLength(11);
+    expect(hints(f).filter((h) => h === "fullback")).toHaveLength(2);
+    expect(hints(f).filter((h) => h === "defender")).toHaveLength(2);
+    const defense = f.slots.filter((slot) => slot.y === 72);
+    expect(defense.map((slot) => slot.positionHint)).toEqual(["fullback", "defender", "defender", "fullback"]);
+  });
+
+  it("todo slot tem chave única e posição que existe na modalidade", () => {
+    for (const sport of [futsal, field, getSport("football_society")]) {
+      for (const f of sport.formations) {
+        const slotKeys = f.slots.map((slot) => slot.key);
+        expect(new Set(slotKeys).size).toBe(slotKeys.length);
+        for (const slot of f.slots) {
+          expect(sport.positions.some((p) => p.key === slot.positionHint)).toBe(true);
+        }
+        expect(f.slots).toHaveLength(sport.playersOnField);
+      }
+    }
+  });
+
+  it("trocar de esquema mantém cada atleta na mesma posição e manda o excedente para o banco", () => {
+    const [f433, f442] = field.formations;
+    let lineup = emptyLineup(f433);
+    f433.slots.forEach((slot, i) => (lineup = placeAthlete(lineup, slot.key, `a${i}`)));
+    const next = reseatLineup(f433, f442, lineup);
+    expect(filledCount(next)).toBe(11);
+    const hintOfAthlete = (formationUsed: typeof f433, l: Lineup, id: string) =>
+      formationUsed.slots.find((slot) => slot.key === slotOf(l, id))?.positionHint;
+    expect(hintOfAthlete(f442, next, "a1")).toBe("fullback");
+    expect(hintOfAthlete(f442, next, "a0")).toBe("goalkeeper");
+    const fewer = reseatLineup(f433, futsal.formations[0], lineup);
+    expect(filledCount(fewer)).toBe(5);
+    expect(slotOf(fewer, "a0")).toBe("gk");
   });
 });
