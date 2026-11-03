@@ -11,12 +11,14 @@ until docker exec "$name" pg_isready -U postgres >/dev/null 2>&1; do sleep 1; do
 sleep 2
 psql_run() { docker exec -i "$name" psql -U postgres -v ON_ERROR_STOP=1 -q "$@"; }
 psql_run < supabase/tests/harness.sql
-for f in supabase/migrations/*_foundation_*.sql; do
+for f in $(ls supabase/migrations/*_foundation_*.sql supabase/migrations/*_access_*.sql supabase/migrations/*_athletes_*.sql | sort); do
   echo "migration: $(basename "$f")"
   psql_run < "$f"
 done
-if ! out=$(psql_run < supabase/tests/foundation_rls.sql 2>&1); then
-  echo "$out" | grep -E "FALHOU|ERROR" || echo "$out"
-  exit 1
-fi
-echo "$out" | grep -E "^NOTICE:  ok|TODOS"
+for test in foundation_rls access_rls athletes_rls; do
+  if ! out=$(psql_run < "supabase/tests/$test.sql" 2>&1); then
+    echo "$out" | grep -E "FALHOU|ERROR" || echo "$out"
+    exit 1
+  fi
+  echo "$out" | grep -E "^NOTICE:  ok|TODOS"
+done
