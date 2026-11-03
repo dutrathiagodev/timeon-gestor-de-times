@@ -1555,6 +1555,11 @@ textarea.form-input {
   text-align: right;
 }
 
+.overall-stat-row dt,
+.overall-stat-row dd {
+  margin: 0;
+}
+
 .leader-index {
   width: 32px;
   height: 32px;
