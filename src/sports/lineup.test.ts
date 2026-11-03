@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  type Lineup,
   emptyLineup,
   filledCount,
   lineupIssues,
@@ -83,7 +84,7 @@ describe("lineup: colocar e remover", () => {
 
 describe("lineup: rotações do vôlei", () => {
   const volleyball = getSport("volleyball");
-  const initial = {
+  const initial: Lineup = {
     ...emptyLineup(volleyball.formations[0]),
     P1: "setter",
     P2: "outside1",
