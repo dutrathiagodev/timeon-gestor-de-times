@@ -38,3 +38,26 @@ export function removeAthlete(lineup: Lineup, athleteId: string): Lineup {
   const slot = slotOf(lineup, athleteId);
   return slot ? { ...lineup, [slot]: null } : lineup;
 }
+
+/**
+ * Rotação do vôlei no sentido horário, vista de cima com a rede no topo:
+ * quem está em P2 vai para P1, P1→P6, P6→P5, P5→P4, P4→P3, P3→P2.
+ * O líbero (L) fica fora da rotação.
+ */
+const ROTATION_ORDER = ["P1", "P6", "P5", "P4", "P3", "P2"] as const;
+
+export function rotateVolleyball(lineup: Lineup): Lineup {
+  const next = { ...lineup };
+  ROTATION_ORDER.forEach((slot, index) => {
+    const from = ROTATION_ORDER[(index + 5) % 6];
+    next[slot] = lineup[from] ?? null;
+  });
+  return next;
+}
+
+/** As seis rotações a partir da inicial; a rotação 1 é a própria escalação inicial. */
+export function volleyballRotations(initial: Lineup): Lineup[] {
+  const rotations = [initial];
+  for (let i = 1; i < 6; i++) rotations.push(rotateVolleyball(rotations[i - 1]));
+  return rotations;
+}
