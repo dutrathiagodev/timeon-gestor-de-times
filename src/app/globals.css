@@ -1555,6 +1555,65 @@ textarea.form-input {
   text-align: right;
 }
 
+.overall-stat-row dt,
+.overall-stat-row dd {
+  margin: 0;
+}
+
+/* Faixas da nota. Degradês opacos e claros: o texto escuro (#34260d) fica acima de 6:1 em todos. */
+.overall-card.is-elite {
+  border-color: rgba(255, 106, 26, 0.5);
+  background:
+    radial-gradient(circle at top center, rgba(255, 255, 255, 0.32), transparent 36%),
+    linear-gradient(180deg, #ffe9aa, #f0b04a);
+}
+
+.overall-card.is-gold {
+  background:
+    radial-gradient(circle at top center, rgba(255, 255, 255, 0.24), transparent 36%),
+    linear-gradient(180deg, #faf5e0, #d9bd6e);
+}
+
+.overall-card.is-silver {
+  border-color: rgba(190, 196, 206, 0.5);
+  background:
+    radial-gradient(circle at top center, rgba(255, 255, 255, 0.3), transparent 36%),
+    linear-gradient(180deg, #f0f2f5, #b4bccb);
+}
+
+.overall-card.is-bronze {
+  border-color: rgba(176, 112, 64, 0.4);
+  background:
+    radial-gradient(circle at top center, rgba(255, 255, 255, 0.22), transparent 36%),
+    linear-gradient(180deg, #f0d6be, #d8a27a);
+}
+
+/*
+ * A forma vai num selo claro: o verde e o vermelho do tema são para fundo escuro
+ * e não passam de 3:1 sobre o dourado. No selo: 6,3:1 (sucesso), 7,5:1 (perigo).
+ */
+.overall-card .tone-success,
+.overall-card .tone-danger,
+.overall-card .tone-neutral {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #fffaeb;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.overall-card .tone-success {
+  color: #0d6b3c;
+}
+
+.overall-card .tone-danger {
+  color: #a3171d;
+}
+
+.overall-card .tone-neutral {
+  color: #5b4a28;
+}
+
 .leader-index {
   width: 32px;
   height: 32px;
