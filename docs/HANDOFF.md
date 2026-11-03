@@ -2,6 +2,8 @@
 
 Documento de passagem: qualquer pessoa ou agente que assumir o repositório deve ler isto primeiro, depois `CLAUDE.md`/`AGENTS.md` e `docs/architecture/`.
 
+**Para entender o desenho do sistema e como mantê-lo atualizado:** [DOCUMENTO-VIVO.md](DOCUMENTO-VIVO.md) (mapa dos documentos, situação de cada módulo, como atualizar e melhorar) e [architecture/system-design.md](architecture/system-design.md). As regras das modalidades estão em [domain/guia-modalidades-esportivas.md](domain/guia-modalidades-esportivas.md).
+
 ## O que é
 
 **TimeOn** (repo `dutrathiagodev/timeon-gestor-de-times`, antes "Falcons"): plataforma de gestão de times esportivos. Hoje atende um time (Falcons Vôlei, Atlética FAP); a meta é multi-time e multi-esporte (vôlei, futsal, fut7/society, campo, basquete, handebol) com conta do atleta, jogo ao vivo, OVR por esporte e escalação salva. Custo zero e segurança são prioridade.
