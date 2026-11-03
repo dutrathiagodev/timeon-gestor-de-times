@@ -10,6 +10,8 @@ create table public.athletes (
   id uuid primary key default gen_random_uuid(),
   organization_id uuid not null references public.organizations (id) on delete cascade,
   user_id uuid references auth.users (id) on delete set null,
+  -- Quem cadastrou: enxerga o atleta mesmo antes de coloca-lo num time.
+  created_by uuid references auth.users (id) on delete set null,
   full_name text not null check (char_length(btrim(full_name)) between 2 and 120),
   nickname text check (nickname is null or char_length(btrim(nickname)) between 1 and 40),
   sex text not null check (sex in ('male', 'female')),
@@ -52,7 +54,21 @@ create table public.athlete_private (
 
 -- Permissoes ------------------------------------------------------------------------------
 
--- Gestor de algum time do atleta, ou admin da organizacao.
+-- Admin ou gestor de algum time da organizacao.
+create function private.is_org_manager(org uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = ''
+as $$
+  -- coalesce: sem papel de comissao org_staff_role e nulo, e "not nulo" nao barraria ninguem.
+  select private.has_org_role(org, array['owner', 'admin'])
+    or coalesce(private.org_staff_role(org) = 'manager', false);
+$$;
+
+-- Admin da organizacao, gestor de algum time do atleta, ou quem cadastrou o atleta e
+-- ainda e admin ou gestor (assim da para gravar o CPF na inscricao, antes do time).
 create function private.is_athlete_manager(athlete uuid)
 returns boolean
 language sql
@@ -68,6 +84,11 @@ as $$
     select 1 from public.team_members m
     join public.team_staff s on s.team_id = m.team_id
     where m.athlete_id = athlete and s.user_id = (select auth.uid()) and s.role = 'manager'
+  ) or exists (
+    select 1 from public.athletes a
+    where a.id = athlete
+      and a.created_by = (select auth.uid())
+      and private.is_org_manager(a.organization_id)
   );
 $$;
 
@@ -84,7 +105,7 @@ as $$
   );
 $$;
 
--- Le o cadastro: a propria pessoa, admin ou a comissao de algum time dela.
+-- Le o cadastro: a propria pessoa, quem cadastrou, admin ou a comissao de algum time dela.
 create function private.can_read_athlete(athlete uuid)
 returns boolean
 language sql
@@ -95,7 +116,8 @@ as $$
   select private.is_athlete_self(athlete)
     or exists (
       select 1 from public.athletes a
-      where a.id = athlete and private.has_org_role(a.organization_id, array['owner', 'admin'])
+      where a.id = athlete
+        and (a.created_by = (select auth.uid()) or private.has_org_role(a.organization_id, array['owner', 'admin']))
     )
     or exists (
       select 1 from public.team_members m
@@ -112,17 +134,6 @@ security definer
 set search_path = ''
 as $$
   select private.is_athlete_self(athlete) or private.is_athlete_manager(athlete);
-$$;
-
--- Admin ou gestor de algum time da organizacao.
-create function private.is_org_manager(org uuid)
-returns boolean
-language sql
-stable
-security definer
-set search_path = ''
-as $$
-  select private.has_org_role(org, array['owner', 'admin']) or private.org_staff_role(org) = 'manager';
 $$;
 
 -- Qualquer vinculo com a organizacao, inclusive pedido de entrada pendente.
@@ -237,8 +248,8 @@ begin
     raise exception 'invalid birth date' using errcode = 'invalid_parameter_value';
   end if;
 
-  insert into public.athletes (organization_id, user_id, full_name, nickname, sex, birth_date)
-  values (p_organization, uid, btrim(p_full_name), nullif(btrim(p_nickname), ''), p_sex, p_birth_date)
+  insert into public.athletes (organization_id, user_id, created_by, full_name, nickname, sex, birth_date)
+  values (p_organization, uid, uid, btrim(p_full_name), nullif(btrim(p_nickname), ''), p_sex, p_birth_date)
   returning id into new_id;
 
   -- Entra no elenco de cada time em que ja tem acesso de jogador.
@@ -276,8 +287,8 @@ begin
   if not private.valid_birth(p_birth_date) then
     raise exception 'invalid birth date' using errcode = 'invalid_parameter_value';
   end if;
-  insert into public.athletes (organization_id, full_name, nickname, sex, birth_date)
-  values (p_organization, btrim(p_full_name), nullif(btrim(p_nickname), ''), p_sex, p_birth_date)
+  insert into public.athletes (organization_id, created_by, full_name, nickname, sex, birth_date)
+  values (p_organization, (select auth.uid()), btrim(p_full_name), nullif(btrim(p_nickname), ''), p_sex, p_birth_date)
   returning id into new_id;
   perform private.audit(p_organization, 'athlete.registered', 'athlete', new_id, '{"by":"staff"}'::jsonb);
   return new_id;
