@@ -57,7 +57,7 @@ export default function LineupBoard({
     if (!slot || !athlete) return;
     onChange(placeAthlete(value, slotKey, athleteId));
     setSelectedId(null);
-    setAnnouncement(`${athlete.name} escalado em ${slot.label}.`);
+    setAnnouncement(`${athlete.name} foi para ${slot.label}.`);
   }
 
   function handleSlotClick(slotKey: string) {
