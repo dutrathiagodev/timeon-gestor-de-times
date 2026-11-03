@@ -138,8 +138,8 @@ Componente `RatingCard` (`src/components/rating-card`), igual ao desenho aprovad
 
 Bolas: estrelas na de futebol, gomos na de basquete, painéis azul e amarelo no vôlei, gomos no handebol. Inspiradas nas bolas oficiais, sem logos de marcas (UEFA, Wilson etc.). Animações respeitam "reduzir movimento".
 
-- **Estatísticas por posição** (`face.ts`): cada posição mostra só o que vale para ela. Goleiro vê "Goleiro" primeiro e nenhuma de ataque; o líbero do vôlei não tem saque, ataque nem bloqueio; no máximo seis por carta.
+- **Estatísticas por posição** (`src/sports/rating/card-stats.ts`): toda posição mostra seis, só as que valem para ela. Goleiro começa por "Defesas" e não tem ataque; o líbero do vôlei não tem saque, ataque nem bloqueio; o pivô do basquete não mostra três pontos. As que a nota já calcula (FIN, PAS, DRI, DEF, FIS, GOL, ARR, REB...) vêm da nota e mudam com os jogos; as demais (REF, POS, MAR, COB, VEL, TOC...) **ainda não têm lance que as alimente**: partem de um valor típico da posição e acompanham a nota geral do atleta. A nota geral (OVR) **não mudou**.
 - **Galeria** (`/cartas`): uma linha por posição e as quatro variantes, por modalidade, com atletas e notas de exemplo.
 - Os cortes de nota estão em `tier.ts`; as cores, em `globals.css` (bloco "Carta do atleta"), por variáveis `--card-*` de cada variante.
-- **Ainda não existe** na nota: as estatísticas finas que as referências mostram (reflexo, posicionamento, velocidade, marcação, jogo aéreo, recepção do líbero etc.). Hoje a carta mostra as estatísticas que a nota calcula. Acrescentá-las pede definir, com o dono, quais entram em cada posição e como são calculadas (guia de modalidades, seção 11).
+- **Pendente**: alimentar as estatísticas de base (reflexo, posicionamento, velocidade, marcação etc.) com lances reais; isso pede novas ações no motor de jogo ao vivo e a aprovação do dono sobre como cada uma é calculada (guia de modalidades, seção 11).
 - **Fonte:** a carta usa a Inter da interface (as referências usam uma fonte condensada); trocar é decisão de design.

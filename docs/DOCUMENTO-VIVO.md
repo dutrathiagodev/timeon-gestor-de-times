@@ -82,6 +82,7 @@ Medir o sistema (guia, seção 15), quando houver dado: jogos no prazo, súmulas
 
 | Data | O que mudou |
 | --- | --- |
+| 2026-11-03 | Cartas: toda posição mostra seis estatísticas próprias (tabela em `card-stats.ts`); a nota geral não mudou. Estatísticas sem lance que as alimente acompanham a nota. |
 | 2026-11-03 | Escalação: mais esquemas por modalidade (futsal 3-1; Fut7 3-1-2; campo 4-1-4-1, 3-4-3, 5-3-2; basquete 1-2-2, 2-1-2, 1-3-1, Horns, 4 abertos; handebol 3-3 e 2-4 no ataque, 6-0 e 5-1 na defesa). Líbero vale em todo sistema do vôlei (regra FIVB). Mover posições cria o esquema "Personalizado", que pode ser salvo com nome (por enquanto só no navegador). Falcons com um time de cada modalidade e organização Teste, ainda fixos em `src/lib/teams.ts`. |
 | 2026-11-03 | Cartas dos atletas redesenhadas a partir das referências do dono: variantes especial (90+), ouro, prata e bronze, estatísticas por posição e galeria em `/cartas`. |
 | 2026-11-03 | Design System v1.1 aplicado como base provisória (tokens, Inter, faixa de título, menu recolhível só com o que existe, tabelas). Tema claro com tokens prontos, ainda não ligado. |

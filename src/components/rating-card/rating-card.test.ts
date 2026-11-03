@@ -39,16 +39,15 @@ describe("RatingCard", () => {
     expect(html).toContain("Camisa #7");
   });
 
-  it("mostra no máximo seis estatísticas, e só as da posição", () => {
+  it("mostra seis estatísticas, só as da posição", () => {
     const shorts = (sport: Parameters<typeof render>[0], position: string) =>
       [...render(sport, { name: "A", positionKey: position }).html.matchAll(/<dt[^>]*>([A-Z0-9]+)<\/dt>/g)].map(
         (m) => m[1],
       );
-    expect(shorts("volleyball", "outside")).toEqual(["ATQ", "PAS", "SAQ", "BLQ", "NOC", "PUL"]);
-    expect(shorts("volleyball", "setter")).toEqual(["TOQ", "PAS", "SAQ", "NOC", "ATQ", "BLQ"]);
-    // O líbero não saca, não ataca e não bloqueia.
-    expect(shorts("volleyball", "libero")).toEqual(["PAS", "TOQ", "NOC"]);
-    expect(shorts("futsal", "ala")).toEqual(["FIN", "PAS", "DRI", "DEF", "FIS"]);
+    expect(shorts("volleyball", "outside")).toEqual(["ATQ", "REC", "SAQ", "BLQ", "DEF", "EST"]);
+    expect(shorts("volleyball", "libero")).toEqual(["REC", "DEF", "SEG", "POS", "COM", "NOC"]);
+    expect(shorts("futsal", "ala")).toEqual(["DRI", "VEL", "PAS", "FIN", "REC", "RES"]);
+    expect(shorts("basketball", "center")).toEqual(["REB", "TOC", "DEF", "FIN", "FIS", "COR"]);
   });
 
   it("goleiro mostra a estatística de goleiro primeiro e nenhuma de ataque", () => {
@@ -66,10 +65,12 @@ describe("RatingCard", () => {
     expect(html).not.toContain(">DRI<");
   });
 
-  it("basquete mostra 3PT e REB", () => {
-    const { html } = render("basketball", { name: "Caio", positionKey: "center" });
-    expect(html).toContain(">3PT<");
-    expect(html).toContain(">REB<");
+  it("basquete: armador mostra 3PT; pivô mostra REB e não mostra 3PT", () => {
+    const guard = render("basketball", { name: "Caio", positionKey: "point_guard" }).html;
+    expect(guard).toContain(">3PT<");
+    const center = render("basketball", { name: "Caio", positionKey: "center" }).html;
+    expect(center).toContain(">REB<");
+    expect(center).not.toContain(">3PT<");
   });
 
   it("faixa da nota vira classe do card", () => {

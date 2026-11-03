@@ -1,6 +1,6 @@
 import { BrandLogo } from "@/components/ui/brand-logo";
 import type { RatingResult, SportDefinition } from "@/sports/types";
-import { faceAttributes } from "./face";
+import { faceStats } from "./face";
 import { formTone, formatForm } from "./form";
 import { positionLabel, positionShort } from "./position";
 import { TIER_LABEL, ratingTier } from "./tier";
@@ -114,7 +114,7 @@ export default function RatingCard({
   compact = false,
 }: RatingCardProps) {
   const tier = ratingTier(rating.overall);
-  const stats = faceAttributes(sport, rating, player.positionKey);
+  const stats = faceStats(sport, rating, player.positionKey);
   const position = positionLabel(sport, player.positionKey);
 
   return (
@@ -186,10 +186,10 @@ export default function RatingCard({
             </div>
 
             <dl className="fut-card-stats">
-              {stats.map((attribute) => (
-                <div key={attribute.key} className="fut-stat">
-                  <dd>{rating.attributes[attribute.key]}</dd>
-                  <dt title={attribute.label}>{attribute.short}</dt>
+              {stats.map((stat) => (
+                <div key={stat.key} className="fut-stat">
+                  <dd>{stat.value}</dd>
+                  <dt title={stat.label}>{stat.short}</dt>
                 </div>
               ))}
             </dl>
