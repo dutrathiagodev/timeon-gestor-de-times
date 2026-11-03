@@ -6,15 +6,15 @@ Como o sistema é organizado e por quê, conforme o uso real: quem usa, o que fa
 
 ## 1. Para quem o sistema existe
 
-O TimeOn é uma plataforma para **gerir times** (elenco, escalação, jogos, pontos, evolução). Uma pessoa entra com um login e pode ter acesso a várias organizações e times.
+O TimeOn é uma plataforma para **gerir uma organização e os times dentro dela** (elenco, escalação, jogos, pontos, evolução). Uma pessoa entra com um login e pode ter acesso a várias organizações e times. **Não controla liga ou campeonato**: o jogo de liga entra no calendário do time como um tipo de jogo, nada além disso (decisão de 2026-11-03).
 
 | Quem | O que precisa fazer | Escopo de acesso |
 | --- | --- | --- |
 | Administração | tudo da organização, incluindo dar e tirar acesso | a organização inteira |
-| Gestor | criar times, gerar códigos, aprovar pedidos, agendar jogos, ver financeiro e relatórios | os times da organização |
+| Gestor | criar times, gerar códigos, aprovar pedidos, agendar jogos, **homologar jogos** e ver relatórios | os times da organização |
 | Técnico | escalar, registrar o jogo ao vivo, ajustar a nota (±5), ver presença e relatórios | os times em que é comissão |
 | Jogador | ver escalação, jogos, a própria nota e estatísticas | os times em que joga; dado privado só o próprio |
-| Público (futuro) | ver calendário, resultados e classificação | só o que o gestor publicar |
+| Família e torcida | **sem acesso por enquanto**; talvez no futuro | — |
 
 Regra de ouro: **acesso por papel e por escopo**. Só entra quem aceita o convite ou quem a administração cadastra (decisão do dono, 2026-11-02). Detalhes em [../backlog/2026-11-02-decisoes-acesso-e-jogos.md](../backlog/2026-11-02-decisoes-acesso-e-jogos.md).
 
@@ -63,7 +63,7 @@ O mapa de módulos que alimenta menu e página inicial é `src/components/layout
 
 ### 4.2 Como o guia de modalidades se encaixa
 
-O guia (seção 13) propõe um modelo centrado em **competição**. O TimeOn é centrado em **time**. Os dois cabem juntos assim:
+O guia (seção 13) propõe um modelo centrado em **competição**. O TimeOn é centrado em **organização e times**: as partes de competição do guia servem só de referência, e as de equipe, atleta, jogo, súmula e avaliação valem. Como cada entidade do guia se encaixa:
 
 | Entidade do guia | No TimeOn |
 | --- | --- |
@@ -72,13 +72,14 @@ O guia (seção 13) propõe um modelo centrado em **competição**. O TimeOn é 
 | `StaffMember` | `team_staff`, `org_memberships` (existe) |
 | `AuditLog` | `audit_events` (existe) |
 | `Rulebook` | **falta**: versão do regulamento ligada a jogo e competição |
-| `Competition`, `Division` | **falta**, fase posterior (ver decisão D1) |
+| `Competition`, `Division` | **não haverá**: o TimeOn não controla liga (D1). O jogo de liga é um tipo de jogo no calendário |
 | `Venue` | **falta**: locais de jogo e treino |
 | `Match`, `MatchRoster`, `MatchOfficial` | **falta**: card 00040 (agenda) |
 | `MatchEvent` | **falta**: card 00041; o motor `src/sports/live` já define as ações por modalidade |
 | `DisciplinaryCase` | **falta**: suspensões e recursos |
 | `AthleteAssessment`, `AssessmentItem` | **falta**: ficha de avaliação com evidência (guia, seção 10) |
 | `AvailabilityRecord` | **falta**: disponibilidade mínima, sem dado clínico |
+| Autorização de menor | **falta** (D4): registro da autorização dos pais e do técnico, com data e quem autorizou |
 
 ### 4.3 Princípios do modelo (valem para tudo que for criado)
 
@@ -91,13 +92,13 @@ O guia (seção 13) propõe um modelo centrado em **competição**. O TimeOn é 
 
 ## 5. Máquinas de estado
 
-**Jogo**: `rascunho → agendado → em andamento → encerrado → homologado`, com saídas `adiado`, `suspenso`, `cancelado`. Só gestor homologa; depois de homologado só muda por retificação auditada. Classificação e estatísticas oficiais só usam jogo homologado.
+**Jogo**: `rascunho → agendado → em andamento → encerrado → homologado`, com saídas `adiado`, `suspenso`, `cancelado`. Só o gestor homologa (decisão D5); depois de homologado só muda por retificação auditada. Estatísticas oficiais só usam jogo homologado. Tipo de jogo: amistoso, treino, **liga** (só marca no calendário), outro.
 
 **Pedido de entrada**: `pendente → aceito | recusado`, ou `aceito` direto quando o código dispensa aprovação. Aceitar cria o vínculo; recusar não deixa rastro de dado pessoal além da auditoria.
 
 **Código do time**: `ativo → usado | revogado | expirado`. Papel fixo no código; código de comissão vale uma vez; 5 erros em 15 minutos travam.
 
-**Inscrição do atleta no time**: `rascunho → pendente → aprovado | recusado`, e `suspenso` por decisão disciplinar.
+**Inscrição do atleta no time**: `rascunho → pendente → aprovado | recusado`, e `suspenso` por decisão disciplinar. **Atleta menor de idade** só fica `aprovado` com a autorização dos pais **e** do técnico registradas (D4).
 
 ## 6. Fluxos principais
 
@@ -118,7 +119,7 @@ Nota automática por modalidade (40 a 99, a partir das estatísticas) + ajuste d
 - Cadastro público desligado; acesso por convite ou por cadastro da administração.
 - RLS em tudo; `anon` sem acesso; permissões padrão do Supabase conferidas por auditoria no CI.
 - CPF, telefone e nascimento cifrados; leitura auditada; rotação de chaves documentada.
-- Dado de menor, imagem e saúde: só o mínimo; nada clínico na plataforma; nada público sem autorização.
+- Menor de idade entra **com autorização dos pais e do técnico**; dado de menor, imagem e saúde: só o mínimo; nada clínico na plataforma; nada público sem autorização.
 - Notas internas e avaliações **não** são estatística oficial e não vão para ranking público.
 - Política de privacidade (LGPD) publicada antes de coletar CPF de verdade (card 00045).
 
@@ -142,19 +143,23 @@ Nota automática por modalidade (40 a 99, a partir das estatísticas) + ajuste d
 | 2. Estatística por modalidade | lances ao vivo persistidos, estatística por posição, relatórios PDF/CSV | 00041 |
 | 3. Avaliação | ficha por posição com evidência, metas, histórico | a criar |
 | 4. Automação | presença, sorteio equilibrado pela nota, alertas de conflito e suspensão | a criar |
-| 5. Competição (opcional) | competição, divisão, classificação, disciplina e recursos | a criar (D1) |
+| 5. Menores e disciplina | autorização dos pais e do técnico; suspensões e recursos | a criar (D4) |
 
 Recomendação do próprio guia, adotada aqui: **não usar IA para dar nota ao atleta** antes de ter definições padronizadas e histórico confiável.
 
-## 10. Decisões em aberto
+## 10. Decisões
 
-| # | Pergunta | Por que importa |
-| --- | --- | --- |
-| D1 | O TimeOn gere só times, ou também a liga/competição (como o Futi)? | muda o modelo (Competition, Division, tabela, súmula oficial) e o público |
-| D2 | O público (família, torcida) vê resultados? Em que endereço? | cria o papel "público" e dados publicáveis |
-| D3 | Haverá cobrança de mensalidade dentro do sistema (Pix) ou só controle manual? | pagamento tem custo, risco e regra própria |
-| D4 | Menores de idade entram no sistema? Quem autoriza? | LGPD pede cuidado específico com dado de menor |
-| D5 | Quem homologa o jogo: só gestor ou também técnico? | define a separação entre registrar e validar |
-| D6 | As seis modalidades entram juntas ou uma a uma depois do vôlei? | ordem do trabalho nas telas |
+Resolvidas pelo dono em 2026-11-03 (texto completo em [../backlog/2026-11-02-decisoes-acesso-e-jogos.md](../backlog/2026-11-02-decisoes-acesso-e-jogos.md), seção 9):
 
-Resolvida uma decisão, registre em `docs/backlog/` e troque a linha aqui por uma frase com a data.
+| # | Decisão |
+| --- | --- |
+| D1 | Só organização e os times dentro dela. **Sem controle de liga**; jogo de liga é só um tipo de jogo no calendário |
+| D2 | Família e torcida sem acesso por enquanto; talvez no futuro |
+| D3 | Sem mensalidade por enquanto (Financeiro fora do menu) |
+| D4 | Menores entram com autorização dos pais e do técnico |
+| D5 | Só o gestor homologa o jogo |
+| D6 | Modalidades sempre separadas; a visão da organização mostra todos os times, agrupados por modalidade |
+
+Em aberto, consequência de D4: **onde e como a autorização do menor é registrada** (quem assina, validade, o que o menor pode fazer sem ela) e a revisão da política de privacidade para dado de menor.
+
+Resolvida uma decisão nova, registre em `docs/backlog/` e troque a linha aqui por uma frase com a data.

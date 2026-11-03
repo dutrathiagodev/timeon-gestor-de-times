@@ -11,7 +11,6 @@ import {
   Shuffle,
   ShieldCheck,
   Users,
-  Wallet,
   type LucideIcon,
 } from "lucide-react";
 import type { OrgRole } from "@/lib/teams";
@@ -45,7 +44,6 @@ export const MODULES: AppModule[] = [
   { href: null, label: "Presença", hint: "Treinos e jogos", description: "Chamada com justificativa e frequência de cada atleta.", icon: ClipboardCheck, group: "Gerenciar", roles: COMMISSION },
   { href: null, label: "Sorteio equilibrado", hint: "Times pela nota", description: "Divide o elenco em times parelhos usando a nota de cada atleta.", icon: Shuffle, group: "Gerenciar", roles: COMMISSION },
   { href: null, label: "Quadra tática", hint: "Jogadas e posições", description: "Desenhe posições e movimentos e guarde na biblioteca do time.", icon: Crosshair, group: "Gerenciar", roles: COMMISSION },
-  { href: null, label: "Financeiro", hint: "Mensalidades e custos", description: "Mensalidades, aluguel de quadra, bolas e inscrições em torneios.", icon: Wallet, group: "Gerenciar", roles: STAFF },
   { href: null, label: "Relatórios", hint: "PDF e planilha", description: "Relatórios por atleta, jogo e equipe para exportar.", icon: FileText, group: "Gerenciar", roles: COMMISSION },
   { href: "/modalidades", label: "Modalidades", hint: "Modelo por esporte", description: "Como escalação e cards ficam em cada modalidade.", icon: LayoutGrid, group: "Sistema", roles: STAFF },
   { href: "/acesso", label: "Gestão de acesso", hint: "Pessoas, códigos e papéis", description: "Quem entra, com qual papel e em qual time.", icon: KeyRound, group: "Sistema", roles: STAFF },

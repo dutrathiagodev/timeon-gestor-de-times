@@ -8,7 +8,7 @@
 2. **Quem é o encarregado** (contato para o titular exercer direitos) e qual o e-mail.
 3. **Prazo de guarda.** Proposta abaixo: enquanto o vínculo estiver ativo e até 5 anos depois, para registro de campeonatos. Defina o prazo que vale para vocês.
 4. **Compartilhamento com campeonatos e federações.** Hoje o sistema não envia nada para fora. Se um dia enviar a ficha do atleta a um campeonato, isso precisa de aviso e base própria.
-5. **Atletas menores de 18 anos.** Precisa de regra para o consentimento dos pais ou responsáveis (seção 8).
+5. **Atletas menores de 18 anos.** O dono decidiu em 2026-11-03: entram **com autorização dos pais e do técnico**. Falta definir como a autorização é registrada e por quanto tempo vale (seção 8).
 6. **Foto do atleta.** Se for usada só para o card, fica como está; se for usada para reconhecimento facial, é dado biométrico (sensível) e muda tudo.
 
 ## 1. Quem somos

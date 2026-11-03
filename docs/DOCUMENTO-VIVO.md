@@ -21,26 +21,26 @@ Ponto único para **entender, atualizar e melhorar** o sistema. Quem chegar (pes
 
 ## 2. O guia de modalidades e o sistema
 
-O guia é a **fonte de verdade esportiva**. Quando o código divergir do guia, o guia ganha, a não ser que haja decisão do dono registrada. Situação de cada módulo que o guia pede (seção 12.2):
+O guia é a **fonte de verdade esportiva**, mas é feito para quem organiza competições; no TimeOn valem as partes de modalidades, equipe, atleta, jogo, súmula e avaliação (decisão D1). Quando o código divergir do guia, o guia ganha, a não ser que haja decisão do dono registrada. Situação de cada módulo que o guia pede (seção 12.2):
 
 | Módulo do guia | Situação | Onde |
 | --- | --- | --- |
 | Painel geral | parcial: início por papel e painel antigo do vôlei | `src/components/sections/home`, `dashboard` |
 | Modalidades e categorias | **pronto**: 6 modalidades, posições, formações, placar | `src/sports/*` |
-| Competições e temporadas | não começou (decisão D1 do system design) | — |
+| Competições e temporadas | **não será feito**: o TimeOn não controla liga (D1); jogo de liga é só um tipo de jogo no calendário | — |
 | Equipes e atletas | **pronto no banco**; telas novas faltam | migrations `20261101…` a `20261103…` |
 | Agenda e locais | não começou | card 00040 |
 | Tabela de jogos | não começou | card 00040 |
 | Súmula digital | motor pronto; tabelas e telas faltam | `src/sports/live`, card 00041 |
 | Estatísticas | parcial: definição por modalidade pronta, tela antiga só de vôlei | `src/sports/*` |
 | Avaliação de atletas | parcial: nota automática e ajuste ±5 (regra); ficha qualitativa não começou | `src/sports/rating` |
-| Disciplina e recursos | não começou | — |
+| Disciplina e recursos | não começou; a autorização de menores (D4) vem primeiro | — |
 | Comunicação | não começou | — |
 | Relatórios | não começou (aparece como "Em breve") | `src/components/layout/modules.ts` |
 
 Regras do guia que o código **já aplica**: formações variáveis por modalidade; posição principal e secundária; nota normalizada por posição (não compara atacante com zagueiro); alertas de categoria e de idade (sub); correção sem apagar (auditoria); dado sensível cifrado.
 
-Regras do guia que **ainda precisam virar código**: versão do regulamento por jogo; parâmetros por categoria (altura da rede, bola, tempo); impedimento de relacionar atleta suspenso; homologação separada do registro; número de camisa único por time quando o regulamento exigir.
+Regras do guia que **ainda precisam virar código**: autorização de menor (pais e técnico); versão do regulamento por jogo; parâmetros por categoria (altura da rede, bola, tempo); impedimento de relacionar atleta suspenso; homologação separada do registro; número de camisa único por time quando o regulamento exigir.
 
 ## 3. Como atualizar (por tipo de mudança)
 
@@ -82,6 +82,7 @@ Medir o sistema (guia, seção 15), quando houver dado: jogos no prazo, súmulas
 
 | Data | O que mudou |
 | --- | --- |
+| 2026-11-03 | Dono respondeu D1 a D6: sem controle de liga, família e torcida sem acesso, sem mensalidade, menores com autorização dos pais e do técnico, só o gestor homologa, modalidades sempre separadas. Financeiro saiu do menu. |
 | 2026-11-03 | Banco de produção aplicado (15 de 15). Formações: futsal 1-2-1, futebol 4-3-3 com laterais; seletor de esquema (PR #49). Moldura nova com troca de organização e time, menu por papel, gestão de acesso (esqueleto) e módulos "Em breve" (PRs #50 e #51). System design e este documento. |
 | 2026-11-02 | Decisões do dono sobre acesso, código do time, CPF, times por modalidade/categoria/faixa e jogos. Motor de jogo ao vivo, nota por modalidade, escalação visual e banco de acesso/atletas. |
 

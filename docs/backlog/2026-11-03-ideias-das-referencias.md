@@ -19,7 +19,7 @@ Um login para várias organizações e times (troca de acesso), papéis por perf
 | --- | --- | --- |
 | Presença em treinos e jogos, com justificativa e regra de faltas | V-Tático, guia de vôlei | evita time incompleto; alimenta a frequência no relatório |
 | Sorteio equilibrado pela nota (OVR) | FairSet, VolleyTeams | a nota por modalidade já existe; times parelhos sem briga |
-| Financeiro simples: mensalidade, quadra, bolas, torneios | CBF, guia de vôlei | gestor controla caixa sem planilha |
+| ~~Financeiro simples~~ (adiado: sem mensalidade por enquanto, 2026-11-03) | CBF, guia de vôlei | gestor controlaria caixa sem planilha |
 | Quadra tática: posições e setas, biblioteca de jogadas | V-Tático | complementa a escalação |
 | Estatística por fundamento no vôlei | V-Tático | o motor ao vivo já registra lances |
 | Relatórios por atleta, jogo e equipe (PDF/CSV) | V-Tático | comissão técnica compartilha |
@@ -30,4 +30,4 @@ Itens com dado de menor, pagamento ou exportação de dados pessoais precisam pa
 
 ## No layout
 
-Os módulos ainda sem tela (Presença, Sorteio equilibrado, Quadra tática, Financeiro, Relatórios) já aparecem como "Em breve" no menu e na página inicial, só para os papéis que os usariam. O mapa fica em `src/components/layout/modules.ts`.
+Os módulos ainda sem tela (Presença, Sorteio equilibrado, Quadra tática, Relatórios) já aparecem como "Em breve" no menu e na página inicial, só para os papéis que os usariam. O mapa fica em `src/components/layout/modules.ts`.
