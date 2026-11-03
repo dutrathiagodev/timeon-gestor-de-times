@@ -43,7 +43,9 @@ describe("pacote de migrations", () => {
   });
 
   it("--from muda o ponto de partida, e um ponto sem migrations avisa em vez de gerar vazio", () => {
-    expect(listMigrations(dir, "20261103140000")).toEqual(["20261103140000_athletes_encrypted_fields.sql"]);
+    const all = listMigrations(dir);
+    const last = all[all.length - 1];
+    expect(listMigrations(dir, last.slice(0, 14))).toEqual([last]);
     expect(() => buildBundle(dir, "29999999999999")).toThrow("nenhuma migration");
   });
 });
