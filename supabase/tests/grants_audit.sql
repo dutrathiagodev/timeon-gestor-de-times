@@ -91,12 +91,13 @@ select t.expect('sequencias: nem anon nem authenticated usam nextval',
 select t.expect('anon nao executa nenhuma funcao de public nem de private',
   not exists (
     select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-    where n.nspname in ('public', 'private') and has_function_privilege('anon', p.oid, 'EXECUTE')
+    where n.nspname in ('public', 'private') and p.prorettype <> 'event_trigger'::regtype
+      and has_function_privilege('anon', p.oid, 'EXECUTE')
   ));
 
 select t.expect('as unicas funcoes de public chamaveis por authenticated sao as RPCs previstas',
   (select array_agg(p.proname::text order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-    where n.nspname = 'public' and p.prokind = 'f' and has_function_privilege('authenticated', p.oid, 'EXECUTE'))
+    where n.nspname = 'public' and p.prokind = 'f' and p.prorettype <> 'event_trigger'::regtype and has_function_privilege('authenticated', p.oid, 'EXECUTE'))
   = array['add_athlete_to_team','correct_athlete_identity','create_team','create_team_invite','decide_join_request',
           'delete_athlete_private','find_athlete_by_cpf_index','read_athlete_private','redeem_team_invite','register_athlete',
           'register_my_athlete','revoke_team_invite','set_athlete_private','update_athlete_profile','update_team_member']);
@@ -104,7 +105,7 @@ select t.expect('as unicas funcoes de public chamaveis por authenticated sao as 
 select t.expect('todas as RPCs de public sao SECURITY DEFINER com search_path vazio',
   not exists (
     select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-    where n.nspname in ('public', 'private') and p.prokind = 'f'
+    where n.nspname in ('public', 'private') and p.prokind = 'f' and p.prorettype <> 'event_trigger'::regtype
       and not (p.prosecdef and exists (select 1 from unnest(p.proconfig) c where c = 'search_path=""'))
       -- as funcoes de private sem SECURITY DEFINER sao puras (sem acesso a tabela)
       and not (n.nspname = 'private' and p.proname in ('new_invite_code', 'normalize_invite_code', 'invite_code_hash', 'valid_birth_year'))

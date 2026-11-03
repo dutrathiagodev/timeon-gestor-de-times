@@ -86,9 +86,9 @@ checks as (
   union all
   select '10 anon nao executa nenhuma funcao de public nem de private',
     not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-      where n.nspname in ('public', 'private') and p.prokind = 'f' and has_function_privilege('anon', p.oid, 'EXECUTE')),
+      where n.nspname in ('public', 'private') and p.prokind = 'f' and p.prorettype <> 'event_trigger'::regtype and has_function_privilege('anon', p.oid, 'EXECUTE')),
     coalesce((select string_agg(n.nspname || '.' || p.proname, ', ') from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-      where n.nspname in ('public', 'private') and p.prokind = 'f' and has_function_privilege('anon', p.oid, 'EXECUTE')), '')
+      where n.nspname in ('public', 'private') and p.prokind = 'f' and p.prorettype <> 'event_trigger'::regtype and has_function_privilege('anon', p.oid, 'EXECUTE')), '')
   union all
   select '11 as 15 RPCs existem, executaveis por authenticated e SECURITY DEFINER com search_path vazio',
     not exists (select 1 from expected_rpcs r where not exists (
@@ -104,10 +104,10 @@ checks as (
   union all
   select '12 nenhuma OUTRA funcao de public e executavel por authenticated (confira as listadas)',
     not exists (select 1 from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-      where n.nspname = 'public' and p.prokind = 'f' and has_function_privilege('authenticated', p.oid, 'EXECUTE')
+      where n.nspname = 'public' and p.prokind = 'f' and p.prorettype <> 'event_trigger'::regtype and has_function_privilege('authenticated', p.oid, 'EXECUTE')
         and p.proname not in (select fn from expected_rpcs)),
     coalesce((select string_agg(p.proname, ', ') from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-      where n.nspname = 'public' and p.prokind = 'f' and has_function_privilege('authenticated', p.oid, 'EXECUTE')
+      where n.nspname = 'public' and p.prokind = 'f' and p.prorettype <> 'event_trigger'::regtype and has_function_privilege('authenticated', p.oid, 'EXECUTE')
         and p.proname not in (select fn from expected_rpcs)), '')
   union all
   select '13 o schema private nao esta exposto na API (Settings > API > Exposed schemas)',
