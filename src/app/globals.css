@@ -1560,6 +1560,19 @@ textarea.form-input {
   margin: 0;
 }
 
+/* Selo da posição: escuro sobre o papel do card (as classes event-type-* são para fundo escuro). */
+.overall-position-pill {
+  align-self: flex-end;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #34260d;
+  color: #fffaeb;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 /* Faixas da nota. Degradês opacos e claros: o texto escuro (#34260d) fica acima de 6:1 em todos. */
 .overall-card.is-elite {
   border-color: rgba(255, 106, 26, 0.5);
