@@ -40,6 +40,32 @@ export function removeAthlete(lineup: Lineup, athleteId: string): Lineup {
 }
 
 /**
+ * Troca de formação (ex.: 4-3-3 para 4-4-2) mantendo quem já estava em campo:
+ * cada atleta vai para um slot livre da mesma posição; quem não encaixa ocupa
+ * os slots que sobrarem, e o excedente volta para o banco.
+ */
+export function reseatLineup(from: Formation, to: Formation, lineup: Lineup): Lineup {
+  const next = emptyLineup(to);
+  const hintOf = new Map(from.slots.map((slot) => [slot.key, slot.positionHint]));
+  const leftover: string[] = [];
+
+  for (const slot of from.slots) {
+    const athleteId = lineup[slot.key];
+    if (!athleteId) continue;
+    const target = to.slots.find(
+      (candidate) => !next[candidate.key] && candidate.positionHint === hintOf.get(slot.key),
+    );
+    if (target) next[target.key] = athleteId;
+    else leftover.push(athleteId);
+  }
+  for (const athleteId of leftover) {
+    const free = to.slots.find((candidate) => !next[candidate.key]);
+    if (free) next[free.key] = athleteId;
+  }
+  return next;
+}
+
+/**
  * Rotação do vôlei no sentido horário, vista de cima com a rede no topo:
  * quem está em P2 vai para P1, P1→P6, P6→P5, P5→P4, P4→P3, P3→P2.
  * O líbero (L) fica fora da rotação.

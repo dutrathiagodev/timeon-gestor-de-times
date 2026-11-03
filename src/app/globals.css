@@ -2220,3 +2220,28 @@ textarea.form-input {
 .board-bench-text small {
   color: var(--text-soft);
 }
+
+.formation-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.formation-option {
+  min-height: 44px;
+  min-width: 56px;
+  padding: 0 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  background: transparent;
+  color: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.formation-option.is-active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+}
