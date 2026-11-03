@@ -4,7 +4,9 @@ import {
   filledCount,
   placeAthlete,
   removeAthlete,
+  rotateVolleyball,
   slotOf,
+  volleyballRotations,
 } from "@/sports/lineup";
 import { getSport } from "@/sports/registry";
 
@@ -75,5 +77,56 @@ describe("lineup: colocar e remover", () => {
     const lineup = placeAthlete(emptyLineup(formation), keys[0], "a");
     expect(removeAthlete(lineup, "a")[keys[0]]).toBeNull();
     expect(removeAthlete(lineup, "z")).toBe(lineup);
+  });
+});
+
+describe("lineup: rotações do vôlei", () => {
+  const volleyball = getSport("volleyball");
+  const initial = {
+    ...emptyLineup(volleyball.formations[0]),
+    P1: "setter",
+    P2: "outside1",
+    P3: "middle1",
+    P4: "opposite",
+    P5: "outside2",
+    P6: "middle2",
+    L: "libero",
+  };
+
+  it("quem está em P2 passa para P1, e P1 vai para P6", () => {
+    const next = rotateVolleyball(initial);
+    expect(next.P1).toBe("outside1");
+    expect(next.P6).toBe("setter");
+    expect(next.P5).toBe("middle2");
+    expect(next.P4).toBe("outside2");
+    expect(next.P3).toBe("opposite");
+    expect(next.P2).toBe("middle1");
+  });
+
+  it("o líbero não rotaciona", () => {
+    expect(rotateVolleyball(initial).L).toBe("libero");
+  });
+
+  it("seis rotações voltam à escalação inicial", () => {
+    let lineup = initial;
+    for (let i = 0; i < 6; i++) lineup = rotateVolleyball(lineup);
+    expect(lineup).toEqual(initial);
+  });
+
+  it("volleyballRotations devolve 6 escalações distintas, a primeira é a inicial", () => {
+    const rotations = volleyballRotations(initial);
+    expect(rotations).toHaveLength(6);
+    expect(rotations[0]).toBe(initial);
+    expect(new Set(rotations.map((r) => JSON.stringify(r))).size).toBe(6);
+  });
+
+  it("o levantador percorre todas as posições ao longo das rotações", () => {
+    const places = volleyballRotations(initial).map((r) => slotOf(r, "setter"));
+    expect(places).toEqual(["P1", "P6", "P5", "P4", "P3", "P2"]);
+  });
+
+  it("slot vazio gira como vazio", () => {
+    const withGap = { ...initial, P2: null };
+    expect(rotateVolleyball(withGap).P1).toBeNull();
   });
 });
