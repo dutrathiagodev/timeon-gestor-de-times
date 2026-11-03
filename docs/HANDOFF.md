@@ -11,17 +11,17 @@ Documento de passagem: qualquer pessoa ou agente que assumir o repositório deve
 - Trello: quadro "TimeOn - Gestor de Times" (https://trello.com/b/3Pzd4STd) com GitHub Power-Up
 - Stack: Next.js 16.4 (App Router), React 19, TypeScript, Tailwind 4, Supabase (Postgres, Auth, Storage), Vitest, GitHub Actions
 
-## Estado atual (2026-11-01)
+## Estado atual (2026-11-03)
 
 | Área | Situação |
 |---|---|
 | Site em produção | marca TimeOn (logo, Sora, laranja/grafite), login com 2FA TOTP, painel com design antigo |
 | Segurança | RLS só `authenticated`, anon sem privilégios, API com allowlist/CSRF/2FA, fotos privadas com URL assinada, `npm audit` 0 |
-| Fundação multi-time (00017) e acesso (00024) | migrations (fundação e `*_access_*`: gestor, time único por esporte+categoria+faixa, criar time, código do time com aceite, auditoria) e 236 verificações de RLS, uma auditoria de permissões e um verificador prontos; **não aplicadas ao banco de produção** |
+| Banco: fundação, acesso e atletas (00017, 00024, 00025, 00038) | **Aplicado em produção em 2026-11-03** (projeto `plataforma-gestao-time`, ref `ncvejypuuorvvhqvbbsa`): 12 migrations coladas no SQL Editor como uma transação só, e `supabase/verify/after-apply.sql` deu **15 de 15 OK**. As tabelas novas estão vazias e nenhuma tela as usa ainda. Gestor, time único por esporte+categoria+faixa, criar time, código do time com aceite, atletas com perfil por time, CPF, telefone e data de nascimento cifrados no servidor, auditoria de leitura. Testes locais: 236 verificações de RLS, auditoria de permissões, verificador e o pacote (`bash supabase/tests/run-local.sh`) |
 | Layout novo | aguardando o usuário (card 00031) |
-| Plano multi-esporte | decisões do dono registradas em `docs/backlog/2026-11-02-decisoes-acesso-e-jogos.md` (papéis, CPF seguro, convite por código, jogos); faltam 4 confirmações na seção 8 do documento |
-| Atletas e dados cifrados (00025, 00038) | migrations `*_athletes_*` (atletas, perfil por time, CPF, telefone e data de nascimento cifrados no servidor, leitura auditada), `src/lib/field-crypto.ts` e `npm run keys:generate`; **não aplicadas ao banco de produção**. Roteiro para aplicar: `docs/runbooks/aplicar-banco-e-chaves.md` (o banco de produção **não tem histórico de migrations do CLI**: não use `db push`; cole o pacote de `node scripts/build-apply-sql.mjs --out apply.sql` no SQL Editor); verificador para rodar no Supabase: `supabase/verify/after-apply.sql`. Estado verificado em 2026-11-03: produção só tem as três tabelas antigas e a função `rls_auto_enable` do Supabase. Nenhuma sessão de IA aplica migration: o dono aplica no Supabase do projeto (o conector da sessão vê outra conta) |
-| Código novo sem uso nas telas | `src/sports` (registro, OVR, ajuste do treinador, escalação) e componentes `rating-card` e `lineup-board`; ligar às telas depende do banco novo e do layout (00031) |
+| Plano multi-esporte | decisões do dono em `docs/backlog/2026-11-02-decisoes-acesso-e-jogos.md`, todas aceitas; em 2026-11-03 telefone e nascimento passaram a ser cifrados. Resta só a direção visual (card 00031) |
+| Histórico de migrations | O banco **não tem** o schema `supabase_migrations` (nunca usou o CLI), então **não use `supabase db push`**. A integração com o GitHub está conectada, mas sem "Deploy to production" (mantenha desligado, ou o merge no `main` tentaria refazer migrations já aplicadas). Para a próxima migration: `node scripts/build-apply-sql.mjs --from <versão> --out apply.sql`, colar no SQL Editor e rodar o verificador. Roteiro: `docs/runbooks/aplicar-banco-e-chaves.md` |
+| Código novo sem uso nas telas | `src/sports` (registro, OVR, ajuste do treinador, escalação, motor ao vivo), `src/lib` (cifra de CPF, telefone e nascimento) e os componentes `rating-card` e `lineup-board`. **Faltam rotas e telas** (inscrição, entrada por código com limite por IP, agenda, jogo ao vivo); dependem das chaves `PII_*` e do layout (00031) |
 
 Backlog (cards 00017 a 00028) em `docs/backlog/2026-10-30-gestor-multi-esporte.md` (+ `-flow.html` e `-scheme.html`). Próximo passo técnico: **00018, registro de esportes em `src/sports`**.
 
@@ -65,9 +65,10 @@ Para tirar print/inspecionar telas sem login, use uma **cópia** do projeto fora
 
 ## Pendências do dono do projeto
 
-1. Mergear os releases abertos para `main` (produção).
-2. Card 00030: responder as 4 perguntas da seção 8 de `docs/backlog/2026-11-02-decisoes-acesso-e-jogos.md` (gestor revela CPF? código de 1 uso para técnico e gestor? aceitar convite libera na hora? telefone sem criptografia de campo?).
-3. Card 00031: enviar o layout novo (design e animações).
-4. Aplicar a migration da 00017 no Supabase só depois de validar o plano (`supabase db push`).
-5. Decidir sobre o arquivo `LICENSE` (o README não declara licença).
-6. Opcional: imagem de pré-visualização social do repositório (Settings → Social preview).
+1. **Chaves `PII_*`**: gerar no próprio terminal (`npm run keys:generate`), guardar duas cópias no cofre de senhas e configurar na Vercel. Sem elas nenhuma rota de CPF funciona. Perder `PII_ENCRYPTION_KEYS` é perder os dados.
+2. **Painel do Supabase**: conferir que `private` não está em *Settings > API > Exposed schemas* (o verificador não conseguiu ler essa configuração) e que o cadastro público está desligado.
+3. **Política de privacidade**: revisar e publicar o rascunho de `docs/legal/politica-de-privacidade.md` antes de coletar CPF de verdade.
+4. Card 00031: enviar o layout novo (design e animações).
+5. **Trello**: criar os cards (texto pronto em `docs/backlog/2026-11-02-cards-para-o-trello.md`) e conferir os números 00019 a 00040, escolhidos sem consultar o quadro.
+6. Decidir sobre o arquivo `LICENSE` (o README não declara licença).
+7. Opcional: imagem de pré-visualização social do repositório (Settings → Social preview).

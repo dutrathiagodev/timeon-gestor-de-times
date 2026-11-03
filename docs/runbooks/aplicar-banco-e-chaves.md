@@ -12,6 +12,10 @@ Consulta feita no projeto certo: o banco tem **só as três tabelas antigas** (`
 
 As migrations novas **só criam objetos novos** e não mexem nas três tabelas antigas.
 
+## Resultado: aplicado em 2026-11-03
+
+O pacote de 12 migrations foi colado no SQL Editor do `plataforma-gestao-time` (`Success. No rows returned`) e o verificador `supabase/verify/after-apply.sql` deu **15 de 15 `OK`**. O que resta deste roteiro é a parte das **chaves** (passo 5), a **política** (passo 6) e a conferência manual do painel (passo 4). Os passos 1 a 3 só precisam ser repetidos para migrations futuras (`--from <versão>` gera o pacote só com as novas).
+
 ## 0. Antes de começar
 
 Rode os testes locais (precisa de Docker). Tudo precisa passar:
