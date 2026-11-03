@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { MAX_ADJUSTMENT, parseAdjustment } from "@/sports/rating/adjustment";
+import { MAX_ADJUSTMENT, applyAdjustment, parseAdjustment } from "@/sports/rating/adjustment";
+import { sports } from "@/sports/registry";
 
 const codes = (input: unknown) => {
   const result = parseAdjustment(input);
@@ -62,6 +63,50 @@ describe("parseAdjustment", () => {
   it("corpo ausente ou que não é objeto não quebra", () => {
     for (const input of [undefined, null, "texto", 7, []]) {
       expect(codes(input)).toEqual(["value_invalid", "reason_invalid"]);
+    }
+  });
+});
+
+describe("applyAdjustment", () => {
+  const base = { overall: 80, attributes: { attack: 85, pass: 75 } };
+
+  it("soma o ajuste e informa o valor aplicado", () => {
+    expect(applyAdjustment(base, 3)).toEqual({ ...base, overall: 83, adjustment: 3 });
+    expect(applyAdjustment(base, -5)).toMatchObject({ overall: 75, adjustment: -5 });
+  });
+
+  it("não mexe nos atributos nem altera o original", () => {
+    const result = applyAdjustment(base, 4);
+    expect(result.attributes).toBe(base.attributes);
+    expect(base.overall).toBe(80);
+  });
+
+  it("respeita o teto 99 e o piso 40", () => {
+    expect(applyAdjustment({ overall: 98, attributes: {} }, 5).overall).toBe(99);
+    expect(applyAdjustment({ overall: 42, attributes: {} }, -5).overall).toBe(40);
+  });
+
+  it("contém valores fora do intervalo vindos do banco", () => {
+    expect(applyAdjustment(base, 50)).toMatchObject({ overall: 85, adjustment: 5 });
+    expect(applyAdjustment(base, -50)).toMatchObject({ overall: 75, adjustment: -5 });
+  });
+
+  it("valor inválido vira zero e decimal arredonda", () => {
+    expect(applyAdjustment(base, Number.NaN)).toMatchObject({ overall: 80, adjustment: 0 });
+    expect(applyAdjustment(base, Infinity)).toMatchObject({ overall: 80, adjustment: 0 });
+    expect(applyAdjustment(base, 2.6)).toMatchObject({ overall: 83, adjustment: 3 });
+  });
+
+  it("-0 não vaza para o resultado", () => {
+    expect(Object.is(applyAdjustment(base, -0).adjustment, 0)).toBe(true);
+  });
+
+  it("funciona com a nota real de cada esporte", () => {
+    for (const sport of Object.values(sports)) {
+      const rating = sport.rating({ totals: {}, games: 0, position: sport.positions[0].key });
+      const up = applyAdjustment(rating, 5);
+      expect(up.overall).toBeLessThanOrEqual(99);
+      expect(up.overall).toBeGreaterThanOrEqual(rating.overall);
     }
   });
 });
