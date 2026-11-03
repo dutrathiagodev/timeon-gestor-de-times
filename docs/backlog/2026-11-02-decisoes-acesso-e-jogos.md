@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| Status | **decidido pelo Thiago em 2026-11-02**; pontos marcados como *proposta* ainda pedem confirmação |
+| Status | **decidido pelo Thiago em 2026-11-02**; os padrões propostos foram aceitos ("ficou bom") |
 | Atualiza | [2026-10-30-gestor-multi-esporte.md](2026-10-30-gestor-multi-esporte.md): D3, D7, D18 e as perguntas Q3 a Q10 |
 | Cards | 00023 (este documento), 00024 a 00028 (seção 7) |
 
@@ -21,6 +21,10 @@
 11. **Time = esporte + categoria + faixa etária.** As "subs" (sub-17 etc.) também são times separados (seção 5).
 12. **Quem pode criar time:** admin, gestor e técnico. Na criação escolhem esporte, categoria (masculino, feminino, misto) e faixa etária. Jogador não cria time. *(interpretação da frase do Thiago, a confirmar)*
 13. **A inscrição tem o campo "sexo"**, para o sistema saber a categoria em que a pessoa pode jogar (seção 4A).
+14. **Tem que ser sempre fácil de usar.** Poucos toques para as ações do dia a dia (convidar, aceitar, escalar, marcar ponto), textos claros e nada de tela cheia de opções.
+15. **Quem entra por código pode precisar de aceite:** o técnico, o gestor ou o admin vê o pedido e aceita ou recusa (seção 3).
+16. **Cada modalidade segue a regra da própria modalidade** na pontuação e nos alertas do jogo (seção 6A).
+17. **Criar jogo é só do gestor e do admin.** O jogo nasce para um time, com data, hora e modalidade, e aparece no calendário desse time (seção 6).
 
 ## 2. Papéis
 
@@ -60,6 +64,8 @@ Regras do código *(proposta)*:
 | Revogação | quem gerou revoga o próprio código; o admin revoga qualquer um; quem já entrou continua |
 | Visibilidade | o admin vê todos os códigos da organização, com quem gerou, quantos usos e quem usou |
 | Auditoria | gerar, usar e revogar entram em `audit_events`, sem o código |
+
+**Aceite de quem entra (opção por código):** ao gerar o código, quem gera escolhe **"Exigir aceite"**. Com o aceite ligado, a pessoa cria a conta, mas fica em **"aguardando"** e só vê uma tela dizendo isso. O técnico, o gestor ou o admin do time recebe o pedido numa lista simples com **Aceitar** e **Recusar** (um toque cada, também em lote). Com o aceite desligado, a pessoa entra na hora. O padrão do código novo é **aceite ligado**; é só desligar quando o grupo for de confiança. Recusar não apaga a conta, só impede o acesso ao time, e fica na auditoria.
 
 **Link de convite:** `https://<site>/entrar#codigo=ABCD...`. O código vai depois do `#`, que o navegador **não envia ao servidor**, então ele não cai em log, em cabeçalho `Referer` nem em histórico de proxy. A página lê o código no navegador e o manda por requisição segura. O link deve ser tratado como senha: quem o recebe entra no time.
 
@@ -141,7 +147,11 @@ Falcons (organização)
 
 Dois momentos no mesmo fluxo:
 
-1. **Agendar:** data e hora, adversário, local, tipo (campeonato, amistoso, treino), time. Gestor e admin criam; técnico vê. Os jogadores do time recebem o jogo na agenda e confirmam presença.
+1. **Agendar (criar o jogo):** só **gestor e admin**. O formulário é curto e pede:
+   - **Time**: já vem preenchido com o time em que a pessoa está (o caso normal). Só aparece para escolher quando ela cria o jogo fora de um time, e lista apenas os times em que ela pode criar jogo.
+   - **Modalidade**: vem do time e **não é um campo livre**, porque a modalidade do time define as regras do jogo; não dá para marcar jogo de basquete num time de vôlei.
+   - **Dia e hora**, **adversário**, **local** e **tipo** (campeonato, amistoso, treino).
+   - O jogo **aparece no calendário do time** escolhido, com a modalidade e a categoria no título (por exemplo "Vôlei Feminino x Atlética Y"). O técnico e os jogadores do time veem; os jogadores recebem na agenda e confirmam presença. Técnico não cria nem edita jogo.
 2. **Registrar o que aconteceu:** durante o jogo, técnico (ou gestor) toca em cada lance, e o placar e as estatísticas saem desses lances.
    - Vôlei: ponto de ataque, ace, bloqueio, erro do adversário, erro nosso, com o atleta e o set.
    - Futebol e handebol: gol, assistência, finalização, defesa, falta, cartão, substituição.
@@ -150,26 +160,37 @@ Dois momentos no mesmo fluxo:
    - Quem não puder acompanhar ao vivo lança os números depois (modo manual). Cada jogo usa um modo só, para não contar duas vezes.
    - Ao encerrar o jogo, grava-se o placar, as estatísticas e o **retrato da nota de cada atleta** daquele esporte.
 
+## 6A. Regras por modalidade
+
+A pontuação e os alertas do jogo ao vivo seguem a regra de cada modalidade, vindas do módulo do esporte em `src/sports`. O técnico toca no lance e o sistema aplica a regra; ele não faz conta.
+
+| Modalidade | Como o ponto vale | Quando termina | Alertas (só avisam) |
+|---|---|---|---|
+| **Vôlei** | cada rally vale 1 ponto, para quem ganha a jogada; erro nosso dá ponto ao adversário | set vai a 25 (o 5º, a 15) com 2 de diferença; vence quem fizer 3 sets; o sistema fecha o set sozinho | líbero na rede (escalação) |
+| **Basquete** | cesta de 2, de 3 ou lance livre de 1 | 4 quartos; empate pede prorrogação, e não pode terminar empatado | atleta com 5 faltas |
+| **Futsal** | gol vale 1 | 2 tempos; empate permitido (prorrogação e pênaltis opcionais) | 5 faltas acumuladas do time no tempo; 2 amarelos viram vermelho |
+| **Fut7 / Society e campo** | gol vale 1 | 2 tempos; empate permitido | 2 amarelos viram vermelho |
+| **Handebol** | gol vale 1 | 2 tempos; empate permitido | 3 exclusões de 2 min do atleta viram exclusão definitiva |
+
+Cada lance sem ponto (defesa, passe, desarme, rebote, falta, cartão) conta só na estatística. Lance que dá ponto atualiza o placar e a estatística ao mesmo tempo.
+
 ## 7. Tarefas decorrentes
 
 | Card | Tarefa | Depende de |
 |---|---|---|
 | 00023 | Este documento e a atualização do plano | nada |
-| 00024 | Papel de gestor, código do time (admin gera qualquer papel; técnico e gestor só jogador), trava de um time por esporte, categoria e faixa etária, criação de time por admin, gestor e técnico, regras de acesso no banco, com testes de RLS | 00023 validado |
+| 00024 | Papel de gestor, código do time com aceite opcional (admin gera qualquer papel; técnico e gestor só jogador), trava de um time por esporte, categoria e faixa etária, criação de time por admin, gestor e técnico, regras de acesso no banco, com testes de RLS | 00023 validado |
 | 00025 | Atletas (com sexo e nascimento), vínculo por time e CPF seguro (criptografia, índice cego, RPC auditada), com alertas de categoria e de sub | 00024 |
-| 00026 | Motor de pontuação ao vivo em `src/sports` (lances → placar e estatísticas, desfazer) | nada (código puro) |
-| 00027 | Agenda de jogos e registro dos lances (tabelas, RPC, rotas) | 00024 e 00026 |
+| 00026 | Motor de pontuação ao vivo em `src/sports` (lances → placar, set e período, estatísticas, desfazer, regra e alertas por modalidade) | nada (código puro) |
+| 00027 | Agenda de jogos (criação só por gestor e admin, no calendário do time) e registro dos lances (tabelas, RPC, rotas) | 00024 e 00026 |
 | 00028 | Telas: seletor de time, agenda, jogo ao vivo | 00027 e o layout (card 00031) |
 
 Os números 00019 a 00022 dos PRs anteriores foram escolhidos sem consultar o Trello. Confira se batem com os cards do quadro.
 
-## 8. Para o Thiago confirmar
+## 8. Confirmações
 
-1. Gestor pode **revelar** o CPF (com auditoria) ou só ver mascarado?
-2. Código de técnico e de gestor (gerado pelo admin) com **1 uso** está bom?
-3. Quem entra por código enviado pelo técnico ou pelo gestor ganha o acesso de jogador **na hora** (com senha e 2FA), ou alguém aprova antes?
-4. Telefone e nascimento sem criptografia de campo está aceitável?
-5. **Criar time** por admin, gestor e técnico: foi isso que você quis dizer? E o criador fica com o mesmo papel dele no time novo?
-6. Sexo e idade diferentes da categoria só **avisam** (padrão), ou devem **bloquear** a entrada até o admin liberar?
+Aceitas em 2026-11-02 ("ficou bom"): gestor revela o CPF com auditoria; código de técnico e gestor com 1 uso; criar time por admin, gestor e técnico, com o criador no mesmo papel; sexo ou idade fora da categoria só avisam; telefone e nascimento sem cifra de campo.
 
-Já respondidas em 2026-11-02: o gestor também convida jogador; as subs são times separados; a inscrição tem o campo sexo.
+Ainda para confirmar:
+
+1. O padrão do código novo é **aceite ligado** (a pessoa espera a aprovação). Prefere o padrão desligado, entrando na hora?
