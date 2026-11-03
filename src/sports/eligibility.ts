@@ -11,11 +11,12 @@ export type EligibilityAlert = {
  * excecoes e o admin pode autorizar. O sexo vem da inscricao; o sistema nao o infere.
  *
  * Sub-N (`age_group` como `sub17`): vale a idade que a pessoa completa no ano
- * de referencia (ano atual menos ano de nascimento), como nos campeonatos.
+ * de referencia (ano atual menos ano de nascimento), como nos campeonatos. So o
+ * ANO de nascimento entra: a data completa fica cifrada e nao e preciso decifra-la.
  */
 export function eligibilityAlerts(
   team: { category: TeamCategory; ageGroup?: string | null },
-  athlete: { sex: AthleteSex; birthDate: string },
+  athlete: { sex: AthleteSex; birthYear: number },
   reference: Date = new Date(),
 ): EligibilityAlert[] {
   const alerts: EligibilityAlert[] = [];
@@ -35,13 +36,11 @@ export function eligibilityAlerts(
 
   const sub = team.ageGroup?.match(/^sub(\d{1,2})$/);
   if (sub) {
-    const birthYear = /^\d{4}-\d{2}-\d{2}$/.test(athlete.birthDate)
-      ? Number(athlete.birthDate.slice(0, 4))
-      : Number.NaN;
-    if (!Number.isInteger(birthYear) || Number.isNaN(new Date(`${athlete.birthDate}T12:00:00`).getTime())) {
+    const birthYear = athlete.birthYear;
+    if (!Number.isInteger(birthYear) || birthYear < 1900 || birthYear > reference.getFullYear()) {
       alerts.push({
         code: "birth_date_invalid",
-        message: "Data de nascimento inválida: não dá para conferir a faixa etária.",
+        message: "Ano de nascimento inválido: não dá para conferir a faixa etária.",
       });
     } else {
       const limit = Number(sub[1]);

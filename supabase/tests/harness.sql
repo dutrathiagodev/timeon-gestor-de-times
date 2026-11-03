@@ -11,3 +11,10 @@ create or replace function auth.uid() returns uuid language sql stable as $$
 $$;
 grant usage on schema auth to authenticated;
 grant usage on schema public to anon, authenticated;
+
+-- No Supabase, tudo que o usuario postgres cria em public nasce com permissao para
+-- anon e authenticated (ALTER DEFAULT PRIVILEGES do projeto). Sem isto os testes nao
+-- veriam permissao a mais; com isto, so passa o que as migrations revogam de proposito.
+alter default privileges in schema public grant all on tables to anon, authenticated;
+alter default privileges in schema public grant all on sequences to anon, authenticated;
+alter default privileges in schema public grant all on functions to anon, authenticated;

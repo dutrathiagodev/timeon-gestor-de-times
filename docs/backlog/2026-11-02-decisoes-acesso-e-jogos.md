@@ -92,7 +92,7 @@ Princípio: um vazamento do banco, de um backup ou de uma exportação **não po
 | Apagar | Atleta ou admin pode pedir; a linha é apagada e a auditoria mantém só o fato |
 | Base legal | Finalidade única: identificar o atleta (inscrição e vínculo). Registrar na política de privacidade antes de coletar de verdade. |
 
-Telefone e data de nascimento seguem a mesma tabela e a mesma regra de leitura, sem criptografia de campo (são menos sensíveis; revisar se o Thiago quiser).
+**Atualização de 2026-11-03:** o Thiago pediu mais dados cifrados. Telefone e a data de nascimento completa passam a ser **cifrados** como o CPF. Em claro ficam só nome, nome de camisa, sexo e o **ano** de nascimento (basta para a faixa etária das subs). A data completa só sai por leitura auditada.
 
 ## 4A. Inscrição e o campo "sexo"
 
@@ -189,7 +189,7 @@ Os números 00019 a 00022 dos PRs anteriores foram escolhidos sem consultar o Tr
 
 ## 8. Confirmações
 
-Aceitas em 2026-11-02 ("ficou bom"): gestor revela o CPF com auditoria; código de técnico e gestor com 1 uso; criar time por admin, gestor e técnico, com o criador no mesmo papel; sexo ou idade fora da categoria só avisam; telefone e nascimento sem cifra de campo.
+Aceitas em 2026-11-02 ("ficou bom"): gestor revela o CPF com auditoria; código de técnico e gestor com 1 uso; criar time por admin, gestor e técnico, com o criador no mesmo papel; sexo ou idade fora da categoria só avisam. (A aceitação de "telefone e nascimento sem cifra de campo" foi revertida em 2026-11-03: agora são cifrados.)
 
 Ainda para confirmar:
 
