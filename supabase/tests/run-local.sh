@@ -50,3 +50,30 @@ if [ "$(guard_run -A -t -c "select count(*) from public.athletes where birth_dat
   exit 1
 fi
 echo "ok - a migration de cifra para sem apagar quando ja ha atleta cadastrado"
+
+# O pacote que o dono cola no SQL Editor (scripts/build-apply-sql.mjs) e o caminho real de
+# aplicacao: tem de funcionar num banco novo, passar no verificador e, se falhar no meio,
+# nao deixar NADA aplicado (uma consulta so = uma transacao). psql -1 faz o mesmo.
+docker exec "$name" psql -U postgres -q -c "create database bundle" >/dev/null
+docker exec "$name" psql -U postgres -q -c "create database bundle_fail" >/dev/null
+bundle_run() { docker exec -i "$name" psql -U postgres -d "$1" -v ON_ERROR_STOP=1 -q "${@:2}"; }
+bundle_run bundle < supabase/tests/harness.sql
+bundle_run bundle_fail < supabase/tests/harness.sql
+node scripts/build-apply-sql.mjs --stdout 2>/dev/null | bundle_run bundle -1
+bundle_out=$(bundle_run bundle -A -t -F ' | ' < supabase/verify/after-apply.sql)
+if echo "$bundle_out" | grep -q "| FALHOU |" || [ "$(echo "$bundle_out" | grep -c '| OK |')" != "15" ]; then
+  echo "FALHOU: o pacote de migrations nao passou no verificador"
+  echo "$bundle_out" | grep -v "| OK |"
+  exit 1
+fi
+echo "ok - o pacote de migrations aplica num banco novo e passa nas 15 checagens"
+if { node scripts/build-apply-sql.mjs --stdout 2>/dev/null; echo "select 1/0;"; } | bundle_run bundle_fail -1 >/dev/null 2>&1; then
+  echo "FALHOU: o pacote com erro no fim foi aplicado"
+  exit 1
+fi
+if [ "$(bundle_run bundle_fail -A -t -c "select count(*) from pg_tables where schemaname = 'public' and tablename in ('teams','athletes','team_invites')")" != "0" ]; then
+  echo "FALHOU: o pacote com erro no fim deixou tabelas aplicadas pela metade"
+  exit 1
+fi
+echo "ok - se o pacote falhar no meio, nada fica aplicado"
+
