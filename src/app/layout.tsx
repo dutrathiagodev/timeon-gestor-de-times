@@ -2,10 +2,10 @@ import type { Metadata } from "next";
 import { Sora } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
-import { ActiveTeamProvider } from "@/components/layout/active-team";
-import Sidebar from "@/components/layout/sidebar";
+import { ActiveContextProvider } from "@/components/layout/active-context";
+import AppFrame from "@/components/layout/app-frame";
 import { SidebarProvider } from "@/components/layout/sidebar-context";
-import { getTeamOptions } from "@/lib/teams";
+import { getOrganizationOptions, getTeamOptions, getUserRole } from "@/lib/teams";
 import { cn } from "@/lib/utils";
 
 // Brand typeface (from the TimeOn logo). Self-hosted by next/font: no request to Google at runtime.
@@ -29,16 +29,16 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={cn(sora.variable)}>
       <body>
-        <ActiveTeamProvider teams={getTeamOptions()}>
+        <ActiveContextProvider
+          organizations={getOrganizationOptions()}
+          teams={getTeamOptions()}
+          role={getUserRole()}
+        >
           <SidebarProvider>
-            <Sidebar />
-            <div className="app-shell">
-              <div className="app-gradient" />
-              <main className="app-main">{children}</main>
-            </div>
+            <AppFrame>{children}</AppFrame>
             <SpeedInsights />
           </SidebarProvider>
-        </ActiveTeamProvider>
+        </ActiveContextProvider>
       </body>
     </html>
   );

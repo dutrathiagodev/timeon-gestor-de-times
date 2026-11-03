@@ -1,118 +1,88 @@
 "use client";
 
 import Link from "next/link";
-import { BrandLogo } from "@/components/ui/brand-logo";
-import { usePathname, useRouter } from "next/navigation";
-import { useSidebar } from "./sidebar-context";
-import { TeamSwitcher, useActiveTeam } from "./active-team";
-import { SportIcon } from "./sport-icon";
+import { usePathname } from "next/navigation";
 import {
   BarChart3,
   CalendarRange,
-  ChevronLeft,
+  Home,
   LayoutDashboard,
   LayoutGrid,
-  LogOut,
   ShieldCheck,
-  Menu,
   Users,
+  type LucideIcon,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { apiRequest } from "@/lib/api-client";
+import { OrganizationSwitcher, TeamSwitcher, useActiveContext } from "./active-context";
+import { SportIcon } from "./sport-icon";
+import { useSidebar } from "./sidebar-context";
 
-const navItems = [
+type NavItem = {
+  href: string;
+  label: string;
+  hint: string;
+  /** Sem ícone fixo: usa o da modalidade do time ativo. */
+  icon: LucideIcon | null;
+};
+
+const navGroups: { label: string; items: NavItem[] }[] = [
   {
-    href: "/dashboard",
-    label: "Dashboard",
-    icon: LayoutDashboard,
-    hint: "Visao geral",
+    label: "Geral",
+    items: [{ href: "/", label: "Início", hint: "Organização e times", icon: Home }],
   },
   {
-    href: "/players",
-    label: "Atletas",
-    icon: Users,
-    hint: "Elenco e cadastro",
+    label: "Time ativo",
+    items: [
+      { href: "/dashboard", label: "Painel", hint: "Visão geral do time", icon: LayoutDashboard },
+      { href: "/players", label: "Atletas", hint: "Elenco e cadastro", icon: Users },
+      { href: "/lineup", label: "Escalação", hint: "Esquema e titulares", icon: null },
+      { href: "/games", label: "Jogos", hint: "Agenda e resultados", icon: CalendarRange },
+      { href: "/statistics", label: "Estatísticas", hint: "Desempenho e leitura", icon: BarChart3 },
+    ],
   },
   {
-    href: "/lineup",
-    label: "Escalacao",
-    icon: null,
-    hint: "Esquema e titulares",
-  },
-  {
-    href: "/statistics",
-    label: "Estatisticas",
-    icon: BarChart3,
-    hint: "Desempenho e leitura",
-  },
-  {
-    href: "/games",
-    label: "Jogos",
-    icon: CalendarRange,
-    hint: "Agenda e resultados",
-  },
-  {
-    href: "/modalidades",
-    label: "Modalidades",
-    icon: LayoutGrid,
-    hint: "Modelo por esporte",
+    label: "Conta",
+    items: [
+      { href: "/modalidades", label: "Modalidades", hint: "Modelo por esporte", icon: LayoutGrid },
+      { href: "/conta/seguranca", label: "Segurança", hint: "Verificação em duas etapas", icon: ShieldCheck },
+    ],
   },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
   const { isOpen, toggleSidebar } = useSidebar();
-  const { team } = useActiveTeam();
+  const { team } = useActiveContext();
 
-  async function handleLogout() {
-    await apiRequest("/api/auth/logout", "POST").catch(() => {});
-    router.replace("/login");
-    router.refresh();
+  function closeOnMobile() {
+    if (window.innerWidth < 1100 && isOpen) toggleSidebar();
   }
-
-  if (pathname === "/login") return null;
 
   return (
     <>
-      <button
-        className="mobile-menu-button"
-        onClick={toggleSidebar}
-        aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
-      >
-        {isOpen ? <ChevronLeft size={18} /> : <Menu size={18} />}
-      </button>
-
       <div
         className={cn("sidebar-overlay", isOpen && "is-visible")}
         onClick={toggleSidebar}
+        aria-hidden="true"
       />
 
       <aside className={cn("app-sidebar", isOpen ? "is-open" : "is-collapsed")}>
-        <div className="sidebar-shell">
-          <div className="sidebar-brand">
-            <BrandLogo className="sidebar-brand-wordmark" />
-            <span className="sidebar-brand-tagline">Gestao de times</span>
+        <nav className="sidebar-shell" aria-label="Principal">
+          <div className="sidebar-context">
+            <OrganizationSwitcher id="side-org" />
+            <TeamSwitcher id="side-team" />
           </div>
 
-          <TeamSwitcher />
-
-          <div className="sidebar-section-label">Navegacao</div>
-
-          <nav className="sidebar-nav">
-            {navItems.map((item) => {
-              const isActive = pathname === item.href;
-
-              return (
+          {navGroups.map((group) => (
+            <div key={group.label} className="sidebar-group">
+              <div className="sidebar-section-label">{group.label}</div>
+              {group.items.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={cn("sidebar-link", isActive && "is-active")}
-                  onClick={() => {
-                    if (window.innerWidth < 1024 && isOpen) {
-                      toggleSidebar();
-                    }
-                  }}
+                  className={cn("sidebar-link", pathname === item.href && "is-active")}
+                  aria-current={pathname === item.href ? "page" : undefined}
+                  onClick={closeOnMobile}
                 >
                   <span className="sidebar-link-icon">
                     {item.icon ? (
@@ -126,37 +96,10 @@ export default function Sidebar() {
                     <small>{item.hint}</small>
                   </span>
                 </Link>
-              );
-            })}
-          </nav>
-
-          <Link
-            href="/conta/seguranca"
-            className={cn("sidebar-link", pathname === "/conta/seguranca" && "is-active")}
-          >
-            <span className="sidebar-link-icon">
-              <ShieldCheck size={18} />
-            </span>
-            <span className="sidebar-link-text">
-              <strong>Seguranca</strong>
-              <small>Verificacao em duas etapas</small>
-            </span>
-          </Link>
-
-          <button className="btn btn-secondary" type="button" onClick={handleLogout}>
-            <LogOut size={16} />
-            Sair
-          </button>
-
-          <div className="sidebar-foot-card">
-            <span className="sidebar-foot-chip">Temporada 2026</span>
-            <h3>Operacao esportiva</h3>
-            <p>
-              Controle elenco, acompanhe desempenho e mantenha a leitura da
-              temporada em um unico painel.
-            </p>
-          </div>
-        </div>
+              ))}
+            </div>
+          ))}
+        </nav>
       </aside>
     </>
   );

@@ -2,7 +2,7 @@
 
 Marca e sistema visual do TimeOn, derivados da logo. Toda cor, fonte e forma do site nasce daqui. Segue [feature.spec.md](feature.spec.md) (estrutura) e [feature.security.md](feature.security.md) (dados).
 
-> Fonte da verdade da marca: o desenho da logo (arquivo "TimeOn" no Claude Design). Este documento descreve como ela vira codigo. O layout das telas ainda segue o modelo anterior e sera redesenhado depois; marca, cor e fonte ja valem.
+> Fonte da verdade da marca: o desenho da logo (arquivo "TimeOn" no Claude Design). Este documento descreve como ela vira codigo. O layout das telas e provisorio (moldura base do card 00046) e sera redesenhado depois; marca, cor e fonte ja valem.
 
 ## Marca
 
@@ -95,3 +95,13 @@ Tokens: `--font-heading` e `--font-body` apontam para `--font-sora`. Para trocar
 - A logo e sempre o componente `<BrandLogo />`, nunca uma imagem copiada.
 - Antes de aceitar uma mudanca visual: contraste dos pares novos na tabela acima, `npm run lint` e `npm run build` sem erros.
 - Layout, animacoes e telas novas por esporte seguem o plano em `docs/backlog/` e dependem do layout que o Thiago enviar.
+
+## Moldura base (provisoria)
+
+Criada para ter onde pendurar as telas multi-esporte; o desenho final vem em outra demanda.
+
+- `src/components/layout/app-frame.tsx`: cabecalho + menu lateral + conteudo; `/login` fica sem moldura.
+- `app-header.tsx`: marca, **organizacao** e **time** ativos (selects) e "Sair". Abaixo de 1100 px os seletores passam para o topo do menu lateral.
+- `active-context.tsx`: organizacao e time ativos, guardados no navegador (`timeon.activeOrganization`, `timeon.activeTeam`). Trocar de organizacao limpa o time. Papel do usuario (`role`) vem do servidor.
+- Inicio (`/`): escolha de organizacao e lista de times por modalidade; "Criar time" so aparece para administracao, gestor e tecnico (hoje desligado, "em breve"); "Entrar com codigo" idem.
+- `src/lib/teams.ts`: de onde vem a lista. **Hoje e fixa** (so o time de volei do modelo antigo); troca pela leitura do banco novo nos cards 00042 e 00043.
