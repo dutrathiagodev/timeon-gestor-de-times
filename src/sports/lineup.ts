@@ -61,3 +61,73 @@ export function volleyballRotations(initial: Lineup): Lineup[] {
   for (let i = 1; i < 6; i++) rotations.push(rotateVolleyball(rotations[i - 1]));
   return rotations;
 }
+
+export type LineupIssue = {
+  code: "position_mismatch" | "libero_front_row" | "libero_slot_requires_libero";
+  slotKey: string;
+  message: string;
+};
+
+const VOLLEYBALL_FRONT_ROW = new Set(["P2", "P3", "P4"]);
+
+type IssueOptions = {
+  /**
+   * Compara a posição do atleta com a indicada no slot. No vôlei só vale para a
+   * rotação 1: depois de girar, cada posição passa por todos os slots.
+   */
+  checkPositionHints?: boolean;
+};
+
+/**
+ * Alertas da escalação. Nenhum bloqueia: o treinador pode escalar fora da
+ * posição de propósito, a tela só avisa. Atleta sem posição cadastrada não gera alerta.
+ */
+export function lineupIssues(
+  sport: Pick<SportDefinition, "key" | "positions">,
+  formation: Formation,
+  lineup: Lineup,
+  athletes: LineupAthlete[],
+  { checkPositionHints = true }: IssueOptions = {},
+): LineupIssue[] {
+  const byId = new Map(athletes.map((athlete) => [athlete.id, athlete]));
+  const label = (key?: string | null) =>
+    sport.positions.find((position) => position.key === key)?.label ?? "posição desconhecida";
+  const issues: LineupIssue[] = [];
+
+  for (const slot of formation.slots) {
+    const athlete = byId.get(lineup[slot.key] ?? "");
+    const position = athlete?.positionKey;
+    if (!athlete || !position) continue;
+
+    if (sport.key === "volleyball") {
+      const isLibero = position === "libero";
+      if (slot.key === "L" && !isLibero) {
+        issues.push({
+          code: "libero_slot_requires_libero",
+          slotKey: slot.key,
+          message: `A vaga de líbero pede um líbero, mas o atleta joga de ${label(position)}.`,
+        });
+        continue;
+      }
+      if (isLibero) {
+        if (VOLLEYBALL_FRONT_ROW.has(slot.key)) {
+          issues.push({
+            code: "libero_front_row",
+            slotKey: slot.key,
+            message: `Líbero não pode jogar na rede (${slot.key}).`,
+          });
+        }
+        continue;
+      }
+    }
+
+    if (checkPositionHints && slot.positionHint && slot.positionHint !== position) {
+      issues.push({
+        code: "position_mismatch",
+        slotKey: slot.key,
+        message: `${slot.label}: o atleta joga de ${label(position)}, não de ${label(slot.positionHint)}.`,
+      });
+    }
+  }
+  return issues;
+}
