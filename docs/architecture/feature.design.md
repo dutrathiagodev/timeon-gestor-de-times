@@ -86,6 +86,7 @@ Tokens: `--font-heading` e `--font-body` apontam para `--font-sora`. Para trocar
 | Selo (`.page-hero-kicker`) | texto `--brand`, fundo `--brand-soft`, caixa alta |
 | Campo (`.form-input`) | fundo `rgba(255,255,255,.05)`, foco com anel laranja |
 | Sucesso | `.tone-success`, `.skill-high`, `.feedback-box.success` usam `--success` |
+| Card de nota (`RatingCard`, `.overall-card`) | papel claro em degradê por faixa (elite 90+, ouro 80+, prata 70+, bronze), texto `#34260d` acima de 6:1; a forma vai num selo claro (`#fffaeb`) com verde/vermelho fechados, porque `--success` e `--danger` nao passam de 3:1 sobre o dourado |
 
 ## Implementacao e verificacao
 

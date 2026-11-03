@@ -1,3 +1,4 @@
+import { HANDBALL_ATTRIBUTES, handballRating } from "./rating/handball";
 import { periodsScore } from "./score";
 import type { SportDefinition } from "./types";
 
@@ -39,5 +40,7 @@ export const handball: SportDefinition = {
     { key: "yellow", label: "Cartões amarelos", group: "Disciplina", polarity: "negative" },
     { key: "red", label: "Cartões vermelhos", group: "Disciplina", polarity: "negative" },
   ],
+  ratingAttributes: HANDBALL_ATTRIBUTES,
+  rating: handballRating,
   dashboardCards: ["next_event", "win_rate", "team_overall", "goal_balance"],
 };

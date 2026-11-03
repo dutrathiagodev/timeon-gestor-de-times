@@ -1,3 +1,4 @@
+import { BASKETBALL_ATTRIBUTES, basketballRating } from "./rating/basketball";
 import { periodsScore } from "./score";
 import type { SportDefinition } from "./types";
 
@@ -43,5 +44,7 @@ export const basketball: SportDefinition = {
     { key: "turnovers", label: "Erros", group: "Jogo", polarity: "negative" },
     { key: "fouls", label: "Faltas", group: "Disciplina", polarity: "negative" },
   ],
+  ratingAttributes: BASKETBALL_ATTRIBUTES,
+  rating: basketballRating,
   dashboardCards: ["next_event", "win_rate", "team_overall", "points_per_game"],
 };
