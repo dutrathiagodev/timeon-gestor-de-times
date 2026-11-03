@@ -5,18 +5,17 @@ import {
   decryptCpf,
   encryptCpf,
   isValidCpf,
-  loadCpfKeys,
   maskCpf,
   normalizeCpf,
-  type CpfKeys,
 } from "@/lib/cpf";
+import type { PiiKeys } from "@/lib/field-crypto";
 
 const VALID = "529.982.247-25";
 const VALID_DIGITS = "52998224725";
 const ATHLETE = "a1111111-1111-1111-1111-111111111111";
 const ORG = "b2222222-2222-2222-2222-222222222222";
 
-const keys = (version = 1): CpfKeys => ({
+const keys = (version = 1): PiiKeys => ({
   currentVersion: version,
   encryption: { 1: randomBytes(32), 2: randomBytes(32) },
   hashKey: randomBytes(32),
@@ -93,7 +92,7 @@ describe("cifra", () => {
   it("o texto cifrado de um atleta não decifra na linha de outro", () => {
     const k = keys();
     const blob = encryptCpf(VALID, ATHLETE, k);
-    expect(() => decryptCpf(blob, "c3333333-3333-3333-3333-333333333333", k)).toThrow("cpf decryption failed");
+    expect(() => decryptCpf(blob, "c3333333-3333-3333-3333-333333333333", k)).toThrow("decryption failed");
   });
 
   it("qualquer byte alterado derruba a decifragem", () => {
@@ -102,19 +101,19 @@ describe("cifra", () => {
     for (let i = 0; i < blob.length; i++) {
       const copy = Buffer.from(blob);
       copy[i] ^= 0x01;
-      expect(() => decryptCpf(copy, ATHLETE, k), `byte ${i}`).toThrow("cpf decryption failed");
+      expect(() => decryptCpf(copy, ATHLETE, k), `byte ${i}`).toThrow("decryption failed");
     }
   });
 
   it("blob curto, vazio ou de versão desconhecida falha com a mesma mensagem", () => {
     const k = keys();
     for (const blob of [Buffer.alloc(0), Buffer.alloc(10), Buffer.alloc(40)]) {
-      expect(() => decryptCpf(blob, ATHLETE, k)).toThrow("cpf decryption failed");
+      expect(() => decryptCpf(blob, ATHLETE, k)).toThrow("decryption failed");
     }
     const real = encryptCpf(VALID, ATHLETE, k);
     const unknownVersion = Buffer.from(real);
     unknownVersion[0] = 9;
-    expect(() => decryptCpf(unknownVersion, ATHLETE, k)).toThrow("cpf decryption failed");
+    expect(() => decryptCpf(unknownVersion, ATHLETE, k)).toThrow("decryption failed");
   });
 
   it("chave errada não decifra, e a mensagem de erro não tem o CPF", () => {
@@ -123,7 +122,7 @@ describe("cifra", () => {
       decryptCpf(blob, ATHLETE, keys());
       throw new Error("deveria falhar");
     } catch (error) {
-      expect((error as Error).message).toBe("cpf decryption failed");
+      expect((error as Error).message).toBe("decryption failed");
       expect((error as Error).message).not.toContain(VALID_DIGITS);
     }
   });
@@ -131,7 +130,7 @@ describe("cifra", () => {
   it("rotação: CPF cifrado com a versão 1 ainda decifra quando a atual é a 2", () => {
     const base = keys(1);
     const old = encryptCpf(VALID, ATHLETE, base);
-    const rotated: CpfKeys = { ...base, currentVersion: 2 };
+    const rotated: PiiKeys = { ...base, currentVersion: 2 };
     expect(old[0]).toBe(1);
     expect(decryptCpf(old, ATHLETE, rotated)).toBe(VALID_DIGITS);
     expect(encryptCpf(VALID, ATHLETE, rotated)[0]).toBe(2);
@@ -164,47 +163,5 @@ describe("índice cego", () => {
 
   it("recusa CPF inválido", () => {
     expect(() => cpfBlindIndex("123", ORG, k)).toThrow("invalid cpf");
-  });
-});
-
-describe("loadCpfKeys", () => {
-  const b64 = (n: number) => randomBytes(n).toString("base64");
-  const good = () => ({
-    CPF_ENCRYPTION_KEYS: JSON.stringify({ "1": b64(32), "2": b64(32) }),
-    CPF_KEY_VERSION: "2",
-    CPF_HASH_KEY: b64(32),
-  });
-
-  it("lê as chaves e a versão atual", () => {
-    const loaded = loadCpfKeys(good());
-    expect(loaded.currentVersion).toBe(2);
-    expect(Object.keys(loaded.encryption).sort()).toEqual(["1", "2"]);
-    expect(loaded.encryption[1].length).toBe(32);
-  });
-
-  it("funciona de ponta a ponta com chaves lidas do ambiente", () => {
-    const loaded = loadCpfKeys(good());
-    expect(decryptCpf(encryptCpf(VALID, ATHLETE, loaded), ATHLETE, loaded)).toBe(VALID_DIGITS);
-  });
-
-  it("falha sem as variáveis, com JSON ruim, chave curta ou versão que não existe", () => {
-    expect(() => loadCpfKeys({})).toThrow("must be set");
-    expect(() => loadCpfKeys({ ...good(), CPF_ENCRYPTION_KEYS: "{nope" })).toThrow("valid JSON");
-    expect(() => loadCpfKeys({ ...good(), CPF_ENCRYPTION_KEYS: "[]" })).toThrow("JSON object");
-    expect(() => loadCpfKeys({ ...good(), CPF_ENCRYPTION_KEYS: JSON.stringify({ "1": b64(16) }), CPF_KEY_VERSION: "1" })).toThrow("at least 32");
-    expect(() => loadCpfKeys({ ...good(), CPF_ENCRYPTION_KEYS: JSON.stringify({ "1": b64(48) }), CPF_KEY_VERSION: "1" })).toThrow("exactly 32");
-    expect(() => loadCpfKeys({ ...good(), CPF_KEY_VERSION: "7" })).toThrow("CPF_KEY_VERSION");
-    expect(() => loadCpfKeys({ ...good(), CPF_KEY_VERSION: "x" })).toThrow("CPF_KEY_VERSION");
-    expect(() => loadCpfKeys({ ...good(), CPF_HASH_KEY: b64(8) })).toThrow("at least 32");
-    expect(() => loadCpfKeys({ ...good(), CPF_ENCRYPTION_KEYS: JSON.stringify({ "0": b64(32) }), CPF_KEY_VERSION: "0" })).toThrow("invalid entry");
-  });
-
-  it("a mensagem de erro nunca traz o valor da chave", () => {
-    const secret = b64(16);
-    try {
-      loadCpfKeys({ ...good(), CPF_ENCRYPTION_KEYS: JSON.stringify({ "1": secret }), CPF_KEY_VERSION: "1" });
-    } catch (error) {
-      expect((error as Error).message).not.toContain(secret);
-    }
   });
 });
