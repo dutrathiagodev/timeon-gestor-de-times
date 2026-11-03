@@ -118,6 +118,7 @@ export const futsal = footballSport({
   formations: [
     ["1-2-1", [["fixo"], ["ala", "ala"], ["pivo"]]],
     ["2-2", [repeat(2, "fixo"), repeat(2, "ala")]],
+    ["3-1", [["ala", "fixo", "ala"], ["pivo"]]],
     ["4-0", [repeat(4, "ala")]],
   ],
   stats: SHARED_STATS,
@@ -141,6 +142,7 @@ export const footballSociety = footballSport({
     ["2-3-1", [repeat(2, "defender"), repeat(3, "midfielder"), ["attacker"]]],
     ["3-2-1", [repeat(3, "defender"), repeat(2, "midfielder"), ["attacker"]]],
     ["2-2-2", [repeat(2, "defender"), repeat(2, "midfielder"), repeat(2, "attacker")]],
+    ["3-1-2", [repeat(3, "defender"), ["midfielder"], repeat(2, "attacker")]],
   ],
   stats: [...SHARED_STATS, MINUTES],
 });
@@ -167,6 +169,9 @@ export const footballField = footballSport({
     ["4-4-2", [BACK_FOUR, repeat(4, "midfielder"), repeat(2, "striker")]],
     ["3-5-2", [repeat(3, "defender"), repeat(5, "midfielder"), repeat(2, "striker")]],
     ["4-2-3-1", [BACK_FOUR, repeat(2, "defensive_mid"), repeat(3, "midfielder"), ["striker"]]],
+    ["4-1-4-1", [BACK_FOUR, ["defensive_mid"], ["winger", "midfielder", "midfielder", "winger"], ["striker"]]],
+    ["3-4-3", [repeat(3, "defender"), ["fullback", "midfielder", "midfielder", "fullback"], ["winger", "striker", "winger"]]],
+    ["5-3-2", [["fullback", "defender", "defender", "defender", "fullback"], repeat(3, "midfielder"), repeat(2, "striker")]],
   ],
   stats: [...SHARED_STATS, MINUTES, ...FIELD_ONLY],
 });

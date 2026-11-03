@@ -35,13 +35,28 @@ describe("RatingCard", () => {
     expect(html).toContain(`>${rating.overall}<`);
     expect(html).toContain("Ana Souza");
     expect(html).toContain("Ponteiro");
+    expect(html).toContain(">PON<");
     expect(html).toContain("Camisa #7");
   });
 
-  it("lista os atributos do esporte na ordem do módulo", () => {
-    const { html } = render("volleyball", { name: "Ana", positionKey: "setter" });
+  it("mostra no máximo seis estatísticas, e só as da posição", () => {
+    const shorts = (sport: Parameters<typeof render>[0], position: string) =>
+      [...render(sport, { name: "A", positionKey: position }).html.matchAll(/<dt[^>]*>([A-Z0-9]+)<\/dt>/g)].map(
+        (m) => m[1],
+      );
+    expect(shorts("volleyball", "outside")).toEqual(["ATQ", "PAS", "SAQ", "BLQ", "NOC", "PUL"]);
+    expect(shorts("volleyball", "setter")).toEqual(["TOQ", "PAS", "SAQ", "NOC", "ATQ", "BLQ"]);
+    // O líbero não saca, não ataca e não bloqueia.
+    expect(shorts("volleyball", "libero")).toEqual(["PAS", "TOQ", "NOC"]);
+    expect(shorts("futsal", "ala")).toEqual(["FIN", "PAS", "DRI", "DEF", "FIS"]);
+  });
+
+  it("goleiro mostra a estatística de goleiro primeiro e nenhuma de ataque", () => {
+    const { html } = render("football_field", { name: "Beto", positionKey: "goalkeeper" });
     const shorts = [...html.matchAll(/<dt[^>]*>([A-Z0-9]+)<\/dt>/g)].map((m) => m[1]);
-    expect(shorts).toEqual(["ATQ", "PAS", "SAQ", "TOQ", "BLQ", "NOC", "PUL"]);
+    expect(shorts[0]).toBe("GOL");
+    expect(shorts).not.toContain("FIN");
+    expect(shorts).not.toContain("DRI");
   });
 
   it("goleiro vê GOL e não vê atributos de linha", () => {
@@ -72,9 +87,9 @@ describe("RatingCard", () => {
     expect(weak.html).toContain(`overall-card is-${ratingTier(weak.rating.overall)}`);
   });
 
-  it("sem foto mostra as iniciais; com foto usa a URL e alt vazio", () => {
+  it("sem foto mostra a silhueta; com foto usa a URL e alt vazio", () => {
     const without = render("futsal", { name: "Ana Souza", positionKey: "ala" });
-    expect(without.html).toContain(">AS<");
+    expect(without.html).toContain("fut-card-silhouette");
     expect(without.html).not.toContain("<img");
 
     const withPhoto = render("futsal", {
@@ -84,11 +99,17 @@ describe("RatingCard", () => {
     });
     expect(withPhoto.html).toContain('src="https://exemplo.test/a.webp?token=x"');
     expect(withPhoto.html).toContain('alt=""');
+    expect(withPhoto.html).not.toContain("fut-card-silhouette");
   });
 
   it("sem camisa mostra o texto padrão", () => {
     const { html } = render("handball", { name: "Duda", positionKey: "pivot", shirtNumber: null });
     expect(html).toContain("Sem camisa definida");
+  });
+
+  it("a variante aparece no texto para leitores de tela", () => {
+    const { html } = render("futsal", { name: "Ana", positionKey: "ala" });
+    expect(html).toMatch(/variante (Especial|Ouro|Prata|Bronze)/);
   });
 
   it("forma: sinal e cor só quando informada; zero é neutro", () => {

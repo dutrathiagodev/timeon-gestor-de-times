@@ -3,10 +3,9 @@
 import { useState } from "react";
 import TopBar from "@/components/layout/top-bar";
 import { SportIcon } from "@/components/layout/sport-icon";
-import FormationPicker from "@/components/lineup-board/formation-picker";
-import LineupBoard from "@/components/lineup-board/lineup-board";
+import LineupEditor from "@/components/lineup-board/lineup-editor";
 import RatingCard from "@/components/rating-card/rating-card";
-import { emptyLineup, reseatLineup, type Lineup } from "@/sports/lineup";
+import { emptyLineup, type Lineup } from "@/sports/lineup";
 import { SPORT_KEYS, getSport } from "@/sports/registry";
 import type { Formation, SportKey } from "@/sports/types";
 import { sampleAthletes } from "./sample-data";
@@ -29,28 +28,16 @@ function startingLineup(sportKey: SportKey, formation: Formation): Lineup {
 function SportPreview({ sportKey }: { sportKey: SportKey }) {
   const sport = getSport(sportKey);
   const athletes = sampleAthletes(sportKey);
-  const [formation, setFormation] = useState(sport.formations[0]);
-  const [lineup, setLineup] = useState(() => startingLineup(sportKey, sport.formations[0]));
   const showcase = athletes.slice(0, 3);
 
   return (
     <div className="modality-preview">
       <section className="panel" aria-label={`Escalação de ${sport.name}`}>
         <h2>Escalação</h2>
-        <FormationPicker
+        <LineupEditor
           sport={sport}
-          formation={formation}
-          onChange={(next) => {
-            setLineup(reseatLineup(formation, next, lineup));
-            setFormation(next);
-          }}
-        />
-        <LineupBoard
-          sport={sport}
-          formation={formation}
           athletes={athletes}
-          value={lineup}
-          onChange={setLineup}
+          initialLineup={(formation) => startingLineup(sportKey, formation)}
         />
       </section>
 
