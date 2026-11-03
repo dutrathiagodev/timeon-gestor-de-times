@@ -1582,6 +1582,19 @@ textarea.form-input {
     linear-gradient(180deg, rgba(240, 214, 190, 0.94), rgba(176, 118, 76, 0.8));
 }
 
+/* O verde e o vermelho do tema são para fundo escuro; no papel do card precisam de tom mais fechado. */
+.overall-card .tone-success {
+  color: #0d6b3c;
+}
+
+.overall-card .tone-danger {
+  color: #a3171d;
+}
+
+.overall-card .tone-neutral {
+  color: rgba(52, 38, 13, 0.72);
+}
+
 .leader-index {
   width: 32px;
   height: 32px;
