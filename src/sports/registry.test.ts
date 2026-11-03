@@ -105,9 +105,9 @@ describe("registro de esportes", () => {
     });
   });
 
-  it("futebol de campo tem 4 formações com 11 em campo", () => {
+  it("futebol de campo tem 7 formações com 11 em campo", () => {
     const field = getSport("football_field");
-    expect(field.formations.map((f) => f.key)).toEqual(["4-3-3", "4-4-2", "3-5-2", "4-2-3-1"]);
+    expect(field.formations.map((f) => f.key)).toEqual(["4-3-3", "4-4-2", "3-5-2", "4-2-3-1", "4-1-4-1", "3-4-3", "5-3-2"]);
   });
 
   it("vôlei tem as rotações P1–P6 e o líbero", () => {

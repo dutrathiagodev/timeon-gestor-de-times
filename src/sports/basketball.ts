@@ -1,6 +1,30 @@
 import { BASKETBALL_ATTRIBUTES, basketballRating } from "./rating/basketball";
 import { periodsScore } from "./score";
-import type { SportDefinition } from "./types";
+import type { Formation, SportDefinition } from "./types";
+
+const SLOT_POSITION = {
+  PG: { label: "Armador", hint: "point_guard" },
+  SG: { label: "Ala-armador", hint: "shooting_guard" },
+  SF: { label: "Ala", hint: "small_forward" },
+  PF: { label: "Ala-pivô", hint: "power_forward" },
+  C: { label: "Pivô", hint: "center" },
+} as const;
+
+type SlotKey = keyof typeof SLOT_POSITION;
+
+function alignment(key: string, at: Record<SlotKey, [number, number]>): Formation {
+  return {
+    key,
+    label: key,
+    slots: (Object.keys(at) as SlotKey[]).map((slot) => ({
+      key: slot,
+      label: SLOT_POSITION[slot].label,
+      x: at[slot][0],
+      y: at[slot][1],
+      positionHint: SLOT_POSITION[slot].hint,
+    })),
+  };
+}
 
 export const basketball: SportDefinition = {
   key: "basketball",
@@ -15,18 +39,13 @@ export const basketball: SportDefinition = {
     { key: "power_forward", label: "Ala-pivô", short: "PF" },
     { key: "center", label: "Pivô", short: "C" },
   ],
+  // Alinhamentos de ataque mais usados; a cesta adversária fica no alto do desenho.
   formations: [
-    {
-      key: "titular",
-      label: "Titular 5",
-      slots: [
-        { key: "PG", label: "Armador", x: 50, y: 75, positionHint: "point_guard" },
-        { key: "SG", label: "Ala-armador", x: 85, y: 60, positionHint: "shooting_guard" },
-        { key: "SF", label: "Ala", x: 15, y: 60, positionHint: "small_forward" },
-        { key: "PF", label: "Ala-pivô", x: 70, y: 30, positionHint: "power_forward" },
-        { key: "C", label: "Pivô", x: 35, y: 25, positionHint: "center" },
-      ],
-    },
+    alignment("1-2-2", { PG: [50, 78], SG: [83, 58], SF: [17, 58], PF: [70, 26], C: [30, 26] }),
+    alignment("2-1-2", { PG: [32, 80], SG: [68, 80], C: [50, 50], SF: [17, 24], PF: [83, 24] }),
+    alignment("1-3-1", { PG: [50, 84], SG: [14, 52], C: [50, 50], SF: [86, 52], PF: [50, 18] }),
+    alignment("Horns", { PG: [50, 82], SG: [12, 30], SF: [88, 30], PF: [32, 54], C: [68, 54] }),
+    alignment("4 abertos", { PG: [30, 78], SG: [70, 78], SF: [12, 36], PF: [88, 36], C: [50, 18] }),
   ],
   score: periodsScore({ periods: 4, maxExtraPeriods: 4, allowDraw: false }),
   stats: [

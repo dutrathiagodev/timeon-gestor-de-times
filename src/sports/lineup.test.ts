@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  CUSTOM_FORMATION_KEY,
   type Lineup,
   emptyLineup,
   filledCount,
   lineupIssues,
+  moveSlot,
   placeAthlete,
   removeAthlete,
   reseatLineup,
@@ -252,5 +254,28 @@ describe("formações e troca de esquema", () => {
     const fewer = reseatLineup(f433, futsal.formations[0], lineup);
     expect(filledCount(fewer)).toBe(5);
     expect(slotOf(fewer, "a0")).toBe("gk");
+  });
+});
+
+describe("esquema personalizado", () => {
+  const field = getSport("football_field");
+  const base = field.formations[0];
+
+  it("mover uma posição cria o Personalizado e mantém as chaves dos slots", () => {
+    const moved = moveSlot(base, "gk", 40, 80);
+    expect(moved.key).toBe(CUSTOM_FORMATION_KEY);
+    expect(moved.label).toBe("Personalizado");
+    expect(moved.slots.map((s) => s.key)).toEqual(base.slots.map((s) => s.key));
+    expect(moved.slots.find((s) => s.key === "gk")).toMatchObject({ x: 40, y: 80 });
+    expect(base.slots.find((s) => s.key === "gk")).toMatchObject({ x: 50, y: 92 });
+  });
+
+  it("não deixa a posição sair do campo", () => {
+    const moved = moveSlot(base, "gk", -20, 140);
+    expect(moved.slots.find((s) => s.key === "gk")).toMatchObject({ x: 7, y: 93 });
+  });
+
+  it("slot que não existe deixa o esquema como está", () => {
+    expect(moveSlot(base, "nada", 10, 10)).toBe(base);
   });
 });
