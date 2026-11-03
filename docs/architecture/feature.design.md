@@ -127,14 +127,16 @@ Primeira aplicação, feita em 2026-11-03; o dono vai refinar depois.
 
 ## Cartas dos atletas
 
-Componente `RatingCard` (`src/components/rating-card`): escudo com nota, posição, ícone da modalidade, retrato (foto ou silhueta), nome e até seis estatísticas em duas colunas, como nas cartas de referência que o dono enviou. O cartão antigo do vôlei (`OverallCard`) agora só adapta os dados e usa o mesmo componente.
+Componente `RatingCard` (`src/components/rating-card`), igual ao desenho aprovado no Claude Design ("Cartas TimeOn"): escudo com cantos chanfrados e ponta rasa, borda dupla, estilhaços e listras pretas no canto direito, brilho nas bordas de baixo, nota e posição em fonte condensada (Barlow Condensed, só nas cartas), bola da modalidade, silhueta (masculina ou feminina) ou foto, nome, até seis estatísticas e a logo do TimeOn (ícone e marca) no pé. O cartão antigo do vôlei (`OverallCard`) agora só adapta os dados e usa o mesmo componente.
 
 | Variante | Nota | Visual |
 | --- | --- | --- |
-| Especial | 90 ou mais | preto com laranja da marca, logo TimeOn no pé |
-| Ouro | 80 a 89 | dourado |
-| Prata | 70 a 79 | prata |
-| Bronze | abaixo de 70 (iniciantes) | bronze |
+| Especial | 90 ou mais | fundo preto, destaque laranja, reflexo animado |
+| Ouro | 80 a 89 | fundo preto, destaque dourado |
+| Prata | 70 a 79 | fundo preto, destaque prata |
+| Bronze | abaixo de 70 (iniciantes) | fundo preto, destaque bronze |
+
+Bolas: estrelas na de futebol, gomos na de basquete, painéis azul e amarelo no vôlei, gomos no handebol. Inspiradas nas bolas oficiais, sem logos de marcas (UEFA, Wilson etc.). Animações respeitam "reduzir movimento".
 
 - **Estatísticas por posição** (`face.ts`): cada posição mostra só o que vale para ela. Goleiro vê "Goleiro" primeiro e nenhuma de ataque; o líbero do vôlei não tem saque, ataque nem bloqueio; no máximo seis por carta.
 - **Galeria** (`/cartas`): uma linha por posição e as quatro variantes, por modalidade, com atletas e notas de exemplo.
