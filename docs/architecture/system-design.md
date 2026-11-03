@@ -47,6 +47,8 @@ Supabase Postgres + Auth + Storage    regras de acesso (RLS), auditoria, dados
 
 O mapa de módulos que alimenta menu e página inicial é `src/components/layout/modules.ts`.
 
+**Páginas por modalidade.** As telas de Gerenciar (Escalação, Atletas, Jogos, Estatísticas) leem o time ativo e escolhem o conteúdo pela modalidade dele (`*-by-sport.tsx` em `src/components/sections`): o vôlei mantém as telas do cadastro atual, e as outras modalidades usam as regras de `src/sports` (esquemas, posições, placar, lances) e o elenco do time. **Visão geral:** o Calendário geral junta os jogos de todos os times da organização, com filtro por time.
+
 ## 4. Modelo de dados
 
 ### 4.1 O que existe no banco de produção (12 migrations aplicadas em 2026-11-03)

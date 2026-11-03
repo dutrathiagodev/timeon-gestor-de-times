@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { withSignedPhotos } from "@/lib/photos";
 import { PLAYER_COLUMNS } from "@/lib/volleyball";
-import PlayersClient from "@/components/sections/players/players";
+import PlayersBySport from "@/components/sections/sport/players-by-sport";
 
 export default async function PlayersPage() {
   const supabase = await createClient();
@@ -11,7 +11,7 @@ export default async function PlayersPage() {
   ]);
 
   return (
-    <PlayersClient
+    <PlayersBySport
       initialPlayers={await withSignedPhotos(supabase, players || [])}
       initialPerformance={performance || []}
     />

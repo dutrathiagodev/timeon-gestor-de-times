@@ -1,5 +1,6 @@
 import {
   BarChart3,
+  CalendarDays,
   CalendarRange,
   ClipboardCheck,
   Crosshair,
@@ -37,6 +38,7 @@ const COMMISSION: OrgRole[] = ["admin", "manager", "coach"];
 /** Mapa único do produto: o menu lateral e os cartões da página inicial saem daqui. */
 export const MODULES: AppModule[] = [
   { href: "/", label: "Início", hint: "Organização e times", description: "Escolha a organização e o time.", icon: Home, group: "Principal" },
+  { href: "/calendario", label: "Calendário geral", hint: "Todos os times", description: "Jogos de todos os times e modalidades da organização.", icon: CalendarDays, group: "Principal" },
   { href: "/dashboard", label: "Painel", hint: "Visão geral do time", description: "Resumo do time, próximos jogos e momento técnico.", icon: LayoutDashboard, group: "Principal" },
   { href: "/players", label: "Atletas", hint: "Elenco e cadastro", description: "Ficha de cada atleta: posição, camisa e dados do cadastro.", icon: Users, group: "Gerenciar" },
   { href: "/lineup", label: "Escalação", hint: "Esquema e titulares", description: "Monte os titulares por esquema tático e veja avisos de posição.", icon: null, group: "Gerenciar" },
