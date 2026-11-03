@@ -124,3 +124,20 @@ Primeira aplicação, feita em 2026-11-03; o dono vai refinar depois.
 - **Botões** de 40 px, primário laranja liso com texto escuro (contraste), secundário com borda; **cartões** só com superfície e borda de 1 px, sem sombra.
 - **Foco visível** laranja, "Ir para o conteúdo", `prefers-reduced-motion`, alvos de 40 a 44 px.
 - **Ainda falta** migrar as telas antigas para os tokens e para o padrão de faixa/tabela, ligar o tema claro, e criar os estados de carregamento, erro e sucesso padronizados (toast).
+
+## Cartas dos atletas
+
+Componente `RatingCard` (`src/components/rating-card`): escudo com nota, posição, ícone da modalidade, retrato (foto ou silhueta), nome e até seis estatísticas em duas colunas, como nas cartas de referência que o dono enviou. O cartão antigo do vôlei (`OverallCard`) agora só adapta os dados e usa o mesmo componente.
+
+| Variante | Nota | Visual |
+| --- | --- | --- |
+| Especial | 90 ou mais | preto com laranja da marca, logo TimeOn no pé |
+| Ouro | 80 a 89 | dourado |
+| Prata | 70 a 79 | prata |
+| Bronze | abaixo de 70 (iniciantes) | bronze |
+
+- **Estatísticas por posição** (`face.ts`): cada posição mostra só o que vale para ela. Goleiro vê "Goleiro" primeiro e nenhuma de ataque; o líbero do vôlei não tem saque, ataque nem bloqueio; no máximo seis por carta.
+- **Galeria** (`/cartas`): uma linha por posição e as quatro variantes, por modalidade, com atletas e notas de exemplo.
+- Os cortes de nota estão em `tier.ts`; as cores, em `globals.css` (bloco "Carta do atleta"), por variáveis `--card-*` de cada variante.
+- **Ainda não existe** na nota: as estatísticas finas que as referências mostram (reflexo, posicionamento, velocidade, marcação, jogo aéreo, recepção do líbero etc.). Hoje a carta mostra as estatísticas que a nota calcula. Acrescentá-las pede definir, com o dono, quais entram em cada posição e como são calculadas (guia de modalidades, seção 11).
+- **Fonte:** a carta usa a Inter da interface (as referências usam uma fonte condensada); trocar é decisão de design.

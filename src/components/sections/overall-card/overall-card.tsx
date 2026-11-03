@@ -1,21 +1,30 @@
 "use client";
 
+import RatingCard from "@/components/rating-card/rating-card";
 import type { PlayerRatings, PlayerRecord } from "@/lib/volleyball";
-import { getEventTypeMeta, getInitials } from "@/lib/volleyball";
+import { getSport } from "@/sports/registry";
 
-const STAT_LABELS: Array<{
-  key: keyof Omit<PlayerRatings, "overall" | "trendScore">;
-  label: string;
-}> = [
-  { key: "ataque", label: "ATQ" },
-  { key: "passe", label: "PAS" },
-  { key: "saque", label: "SAQ" },
-  { key: "toque", label: "TOQ" },
-  { key: "bloqueio", label: "BLQ" },
-  { key: "nocao", label: "NOC" },
-  { key: "pulo", label: "PUL" },
-];
+const volleyball = getSport("volleyball");
 
+const normalize = (text: string) =>
+  text
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .trim()
+    .toLowerCase();
+
+/** O cadastro antigo guarda a posição como texto livre ("Levantador"); procura a posição do vôlei. */
+function volleyballPositionKey(text?: string | null): string | null {
+  if (!text) return null;
+  const wanted = normalize(text);
+  return (
+    volleyball.positions.find(
+      (position) => normalize(position.label) === wanted || normalize(position.short) === wanted,
+    )?.key ?? null
+  );
+}
+
+/** Carta do vôlei com a nota do painel antigo, desenhada pelo mesmo card das outras modalidades. */
 export default function OverallCard({
   player,
   ratings,
@@ -27,56 +36,30 @@ export default function OverallCard({
   caption?: string;
   compact?: boolean;
 }) {
-  const badgeMeta =
-    ratings.overall >= 90
-      ? getEventTypeMeta("CAMPEONATO")
-      : ratings.overall >= 80
-        ? getEventTypeMeta("AMISTOSO")
-        : ratings.overall >= 70
-          ? getEventTypeMeta("TREINO")
-          : getEventTypeMeta("OUTRO");
-
   return (
-    <article className={`overall-card ${compact ? "is-compact" : ""}`}>
-      <div className="overall-card-glow" />
-      <div className="overall-card-head">
-        <div className="overall-rating-block">
-          <span className="overall-rating-value">{ratings.overall}</span>
-          <span className="overall-rating-label">OVR</span>
-        </div>
-
-        <div className="overall-player-meta">
-          <span className={`event-pill ${badgeMeta.colorClass}`}>
-            {player.posicao || "ATLETA"}
-          </span>
-          <strong>{player.nome}</strong>
-          <small>{player.camisa != null ? `Camisa #${player.camisa}` : "Sem camisa definida"}</small>
-        </div>
-      </div>
-
-      <div className="overall-portrait">
-        {player.foto_url ? (
-          <img src={player.foto_url} alt={player.nome} />
-        ) : (
-          <div className="overall-placeholder">{getInitials(player.nome)}</div>
-        )}
-      </div>
-
-      <div className="overall-stats-grid">
-        {STAT_LABELS.map((stat) => (
-          <div key={stat.key} className="overall-stat-row">
-            <span>{stat.label}</span>
-            <strong>{ratings[stat.key]}</strong>
-          </div>
-        ))}
-      </div>
-
-      <div className="overall-card-footer">
-        <span className={ratings.trendScore >= 0 ? "tone-success" : "tone-danger"}>
-          {ratings.trendScore >= 0 ? `+${ratings.trendScore}` : ratings.trendScore} forma
-        </span>
-        <small>{caption || "Leitura acumulada do atleta"}</small>
-      </div>
-    </article>
+    <RatingCard
+      sport={volleyball}
+      rating={{
+        overall: ratings.overall,
+        attributes: {
+          attack: ratings.ataque,
+          pass: ratings.passe,
+          serve: ratings.saque,
+          set: ratings.toque,
+          block: ratings.bloqueio,
+          reading: ratings.nocao,
+          jump: ratings.pulo,
+        },
+      }}
+      player={{
+        name: player.nome,
+        positionKey: volleyballPositionKey(player.posicao),
+        shirtNumber: player.camisa,
+        photoUrl: player.foto_url,
+      }}
+      form={ratings.trendScore}
+      caption={caption}
+      compact={compact}
+    />
   );
 }

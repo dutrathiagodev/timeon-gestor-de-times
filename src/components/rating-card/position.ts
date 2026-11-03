@@ -7,3 +7,11 @@ export function positionLabel(
 ): string {
   return sport.positions.find((position) => position.key === key)?.label ?? "Atleta";
 }
+
+/** Sigla da posição (ALA, GOL, PG); sem posição conhecida, "ATL". */
+export function positionShort(
+  sport: Pick<SportDefinition, "positions">,
+  key?: string | null,
+): string {
+  return sport.positions.find((position) => position.key === key)?.short ?? "ATL";
+}
