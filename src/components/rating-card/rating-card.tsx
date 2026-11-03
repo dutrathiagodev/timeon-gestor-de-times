@@ -2,7 +2,7 @@ import { getInitials } from "@/lib/volleyball";
 import type { RatingResult, SportDefinition } from "@/sports/types";
 import { formTone, formatForm } from "./form";
 import { positionLabel } from "./position";
-import { ratingTier, type RatingTier } from "./tier";
+import { ratingTier } from "./tier";
 
 export type RatingCardPlayer = {
   name: string;
@@ -19,14 +19,6 @@ type RatingCardProps = {
   form?: number;
   caption?: string;
   compact?: boolean;
-};
-
-/** Reaproveita as cores de evento que o card de vôlei já usava por faixa. */
-const TIER_PILL: Record<RatingTier, string> = {
-  elite: "event-type-championship",
-  gold: "event-type-friendly",
-  silver: "event-type-training",
-  bronze: "event-type-other",
 };
 
 /** Card de nota do atleta em qualquer esporte: os atributos vêm do módulo do esporte. */
@@ -56,7 +48,7 @@ export default function RatingCard({
         </div>
 
         <div className="overall-player-meta">
-          <span className={`event-pill ${TIER_PILL[tier]}`}>
+          <span className="overall-position-pill">
             {positionLabel(sport, player.positionKey)}
           </span>
           <strong>{player.name}</strong>
