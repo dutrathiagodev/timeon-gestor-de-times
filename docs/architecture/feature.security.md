@@ -78,15 +78,31 @@ Decisoes em `docs/backlog/2026-11-02-decisoes-acesso-e-jogos.md`.
 - `audit_events` e so de insercao (gatilho barra update e delete) e nunca recebe o codigo. Leitura so para admin.
 - Todas as escritas desse fluxo passam por funcoes `SECURITY DEFINER` com `search_path` vazio; as tabelas nao tem INSERT, UPDATE nem DELETE para o cliente (exceto remover jogador, por gestor ou admin).
 
-## Atletas e CPF (task 00025)
+## Atletas e dados pessoais cifrados (tasks 00025 e 00038)
 
-- Um cadastro por pessoa (`athletes`, com sexo e nascimento) e **um perfil esportivo por time** (`team_members`: posicao validada por `sport_positions`, camisa unica por time, status). Sexo e nascimento so admin e gestor corrigem; a pessoa nao muda depois de inscrita.
-- **CPF so existe em claro na memoria do servidor** (`src/lib/cpf.ts`). No banco ficam o texto cifrado (AES-256-GCM, 40 bytes: versao, IV, tag e conteudo, com o id do atleta como dado autenticado) e um indice cego (HMAC-SHA-256 com o id da organizacao) para achar duplicado sem decifrar.
-- Chaves so em variavel de ambiente do servidor (Vercel), nunca no repositorio nem no navegador: `CPF_ENCRYPTION_KEYS` (JSON versao para chave de 32 bytes em base64), `CPF_KEY_VERSION` e `CPF_HASH_KEY` (base64, 32 bytes ou mais). Rotacao: acrescente a chave nova, mude `CPF_KEY_VERSION` e recifre aos poucos; as antigas continuam decifrando. Trocar `CPF_HASH_KEY` obriga recalcular todos os indices.
-- `athlete_private` nao tem policy nem grant: so as funcoes `set_athlete_private`, `read_athlete_private`, `find_athlete_by_cpf_index` e `delete_athlete_private` acessam. O tamanho fixo (40 e 32 bytes) barra CPF em claro.
-- **Toda leitura do CPF e gravada em `audit_events` na mesma transacao**, antes de devolver. Leitura negada nao grava. A auditoria nunca guarda CPF, indice, telefone nem nome.
-- Quem acessa o CPF: a propria pessoa, admin da organizacao, gestor de um time em que a pessoa joga e quem cadastrou a pessoa (se ainda e admin ou gestor). **Tecnico nunca.** Apagar: so admin ou a propria pessoa.
-- Armadilha ja vista: funcao booleana que devolve nulo para quem nao tem papel (`org_staff_role(...) = 'manager'`). Em `if ... or not funcao(...)` o nulo nao barra ninguem. Use `coalesce(..., false)` e teste o caso sem vinculo.
+- Um cadastro por pessoa (`athletes`) e **um perfil esportivo por time** (`team_members`: posicao validada por `sport_positions`, camisa unica por time, status). Sexo e data de nascimento so admin e gestor corrigem; a pessoa nao muda depois de inscrita.
+- **O que e cifrado:** CPF, telefone e a data de nascimento completa. **O que fica em claro:** nome, nome de camisa, sexo e o **ano** de nascimento (`birth_year`, basta para a faixa etaria das subs). A comissao precisa de nome e sexo para montar o elenco e os avisos de categoria; o RLS os protege.
+- **Cifra so no servidor** (`src/lib/field-crypto.ts`, `cpf.ts`, `pii.ts`): AES-256-GCM, formato `[versao:1][iv:12][tag:16][valor]`. O **tipo do campo e o id do atleta** entram como dado autenticado: o texto cifrado do telefone nao decifra como CPF nem na linha de outro atleta. O banco nunca ve o valor em claro.
+- Tamanhos fixos no banco (CPF 40 bytes, telefone 39 a 42, data 39, indice 32) barram valor em claro, que e menor.
+- **Indice cego** do CPF: HMAC-SHA-256 com o tipo do campo e o id da organizacao. Acha duplicado sem decifrar; a mesma pessoa em outra organizacao tem outro indice.
+- **Chaves** so em variavel de ambiente do servidor (Vercel), nunca no repositorio nem no navegador: `PII_ENCRYPTION_KEYS` (JSON versao para chave de 32 bytes em base64), `PII_KEY_VERSION` e `PII_HASH_KEY`. Gere no seu terminal com `npm run keys:generate`. Rotacao: `npm run keys:generate -- --rotate 2`, acrescente a entrada ao JSON **sem remover a antiga**, depois mude `PII_KEY_VERSION`. **Nunca troque `PII_HASH_KEY`** (invalida todos os indices). Perder `PII_ENCRYPTION_KEYS` e perder os dados. Roteiro completo: `docs/runbooks/aplicar-banco-e-chaves.md`.
+- `athlete_private` nao tem policy nem grant: so as funcoes `set_athlete_private`, `read_athlete_private`, `find_athlete_by_cpf_index` e `delete_athlete_private` acessam. Parametro nulo em `set_athlete_private` significa "nao mexer".
+- **Toda leitura e gravada em `audit_events` na mesma transacao**, antes de devolver. Leitura negada nao grava. A auditoria nunca guarda valor, indice, telefone nem nome.
+- Quem acessa: a propria pessoa, admin da organizacao, gestor de um time em que a pessoa joga e quem cadastrou a pessoa (se ainda e admin ou gestor). **Tecnico nunca.** Apagar: so admin ou a propria pessoa.
+- A migration que remove a data em claro **para** se ja houver atleta cadastrado (o SQL nao consegue cifrar); nesse caso migre antes por um script no servidor.
+
+## Permissoes padrao do Supabase
+
+No Supabase toda tabela, sequencia e funcao criada em `public` **nasce com permissao para `anon` e `authenticated`**. Por isso:
+
+- cada migration que cria tabela deve revogar tudo (`revoke all ... from anon, authenticated`) e conceder so o necessario; `supabase/tests/grants_audit.sql` falha se uma tabela nova nascer sem decisao, e o harness de teste simula esse padrao;
+- `supabase/verify/after-apply.sql` e um `SELECT` somente leitura para rodar no Supabase **de verdade** depois de aplicar: as 15 linhas precisam dizer `OK`;
+- o schema `private` nao pode estar em *Settings > API > Exposed schemas*.
+
+## Armadilhas ja vistas
+
+- Funcao booleana que devolve nulo para quem nao tem papel (`org_staff_role(...) = 'manager'`): em `if ... or not funcao(...)` o nulo nao barra ninguem. Use `coalesce(..., false)` e teste o usuario sem vinculo.
+- `REVOKE ... FROM anon` nao basta no Supabase: o `authenticated` herda `ALL` do padrao e so o RLS o segurava.
 
 ## Checklist de PR
 

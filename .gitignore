@@ -45,3 +45,6 @@ next-env.d.ts
 
 # supabase cli
 supabase/.temp
+
+# pacote de migrations gerado para colar no SQL Editor (nao commitar)
+/apply.sql
