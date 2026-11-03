@@ -12,7 +12,6 @@ export type ParsedAdjustment =
   | { ok: true; value: number; reason: string }
   | { ok: false; issues: Issue[] };
 
-// eslint-disable-next-line no-control-regex
 const CONTROL_CHARS = /[\u0000-\u001f\u007f]/;
 
 /**
