@@ -11,12 +11,16 @@
 1. **CPF é coletado**, porque é o identificador da pessoa. A relação entre CPF e atleta precisa ser **muito segura** (seção 4). Isso reverte a recomendação anterior de não coletar (antiga D3).
 2. **Organização com vários times, um por esporte e categoria.** A atlética é a organização. Cada modalidade é um time e cada modalidade tem versão **masculina e feminina**: Vôlei Masculino, Vôlei Feminino, Futsal Masculino, Futsal Feminino etc. (seção 5). Hoje existe só a **Falcons**, com o time de vôlei.
 3. **Trocar de time** pelo próprio site. Ao entrar no time de vôlei da Falcons, o layout e as funcionalidades giram em torno do vôlei.
-4. **Quatro tipos de acesso:** admin, gestor, técnico e jogador (seção 2). **O admin concede qualquer acesso; o técnico só convida jogador para o próprio time** (seção 3).
+4. **Quatro tipos de acesso:** admin, gestor, técnico e jogador (seção 2). **O admin concede qualquer acesso; o técnico e o gestor só convidam jogador para o próprio time** (seção 3).
 5. **Entra na plataforma só quem aceita um convite ou quem tem o registro criado por um admin.** Não existe cadastro aberto.
 6. **No início o convite é um código do time**, que o técnico pode enviar (por código ou por link) para a pessoa entrar como **jogador** (seção 3).
 7. **Jogador em quantas modalidades quiser** (vôlei e futsal são só exemplos; pode ser todas): **um login só**, e os dados ficam **separados em cada modalidade**: posição, **número da camisa**, estatísticas, pontos e nota (seção 5).
 8. **Agendar jogo e registrar o que aconteceu** para gerenciar os pontos (seção 6).
 9. **Ordem dos esportes:** não há ordem específica. Os seis módulos já existem no código; o que muda o ritmo é só o time que a atlética criar.
+10. **O gestor também convida jogadores**, como o técnico (seção 3).
+11. **Time = esporte + categoria + faixa etária.** As "subs" (sub-17 etc.) também são times separados (seção 5).
+12. **Quem pode criar time:** admin, gestor e técnico. Na criação escolhem esporte, categoria (masculino, feminino, misto) e faixa etária. Jogador não cria time. *(interpretação da frase do Thiago, a confirmar)*
+13. **A inscrição tem o campo "sexo"**, para o sistema saber a categoria em que a pessoa pode jogar (seção 4A).
 
 ## 2. Papéis
 
@@ -24,10 +28,12 @@ Os quatro papéis do Thiago mapeiam assim no modelo. Cada pessoa tem um papel **
 
 | Papel | Modelo | Pode |
 |---|---|---|
-| **Admin** | `org_memberships` (`owner`, `admin`) | Tudo na organização. **Único que cria times e concede os papéis de gestor e técnico.** Gera código de qualquer papel e retira qualquer acesso. Lê CPF. |
-| **Gestor** | `team_staff.role = 'manager'` *(novo)* | Administra o time: elenco, agenda de jogos, encerrar jogo. Convida jogadores para o próprio time, como o técnico *(proposta)*. Vê CPF mascarado e pode revelar, com registro de auditoria. *(proposta)* |
-| **Técnico** | `team_staff.role = 'coach'` | Escalação, pontuação ao vivo, estatísticas, ajuste da nota (±5). **Gera e envia o código ou o link de convite de jogador do próprio time.** Não convida técnico nem gestor. **Não vê CPF.** |
+| **Admin** | `org_memberships` (`owner`, `admin`) | Tudo na organização. **Único que concede os papéis de gestor e técnico.** Gera código de qualquer papel e retira qualquer acesso. Lê CPF. |
+| **Gestor** | `team_staff.role = 'manager'` *(novo)* | Administra o time: elenco, agenda de jogos, encerrar jogo. Convida jogadores para o próprio time, como o técnico. Cria times. Vê CPF mascarado e pode revelar, com registro de auditoria. *(proposta)* |
+| **Técnico** | `team_staff.role = 'coach'` | Escalação, pontuação ao vivo, estatísticas, ajuste da nota (±5). **Gera e envia o código ou o link de convite de jogador do próprio time.** Cria times. Não convida técnico nem gestor. **Não vê CPF.** |
 | **Jogador** | `athletes.user_id` + vínculo em `team_members` | Vê o próprio perfil, nota e estatísticas **por esporte**, confirma presença e acompanha o jogo ao vivo dos seus times. Vê só o próprio CPF. |
+
+**Criar time** é permitido a admin, gestor e técnico. Quem cria um time passa a ter, **nesse time**, o mesmo papel que já tem na organização (o técnico vira técnico dele, o gestor vira gestor); criar time nunca dá papel maior que o da pessoa. Jogador não cria time.
 
 Os papéis `scout` e `viewer` continuam aceitos no banco, mas ficam sem uso na interface até alguém pedir.
 
@@ -38,13 +44,13 @@ Duas portas de entrada, e só elas:
 - **Registro criado pelo admin:** o admin cria o usuário e o vínculo. É o caminho de hoje e continua valendo.
 - **Código do time:** um código ligado a **um time** (Vôlei Feminino, por exemplo, e não a organização inteira). Quem tem o código cria a conta e entra no time com o papel fixado no código.
 
-O **técnico** (e o gestor) gera o código do próprio time e o envia por código ou por link. Quem entra por ele vira **jogador**. Para técnico ou gestor, só o admin gera o código.
+O **técnico e o gestor** geram o código do próprio time e o enviam por código ou por link. Quem entra por ele vira **jogador**. Para técnico ou gestor, só o admin gera o código.
 
 Regras do código *(proposta)*:
 
 | Item | Regra |
 |---|---|
-| Quem gera | **admin:** qualquer papel, em qualquer time. **Técnico e gestor:** só papel jogador, só no próprio time. |
+| Quem gera | **admin:** qualquer papel, em qualquer time. **Técnico e gestor:** só papel jogador, só no próprio time (o gestor convida jogadores como o técnico). |
 | Papel | fixado ao gerar (padrão **jogador**); o código nunca deixa o portador escolher o papel. Um código gerado por técnico ou gestor **não pode** valer como técnico, gestor ou admin. |
 | Validade | 7 dias por padrão; o admin pode encurtar |
 | Usos | jogador: até 30; técnico e gestor: **1 uso** |
@@ -82,21 +88,42 @@ Princípio: um vazamento do banco, de um backup ou de uma exportação **não po
 
 Telefone e data de nascimento seguem a mesma tabela e a mesma regra de leitura, sem criptografia de campo (são menos sensíveis; revisar se o Thiago quiser).
 
+## 4A. Inscrição e o campo "sexo"
+
+A inscrição do jogador tem dados pessoais (um cadastro por pessoa, valem para todas as modalidades) e a escolha do time (cada time tem o próprio perfil esportivo).
+
+| Dado | Regra |
+|---|---|
+| Nome e nome de camisa | obrigatórios |
+| **Sexo** | **obrigatório**; `masculino` ou `feminino`. Não é editável pelo jogador depois de confirmado; admin e gestor corrigem, com auditoria. |
+| Nascimento | obrigatório (define a elegibilidade nas subs) |
+| CPF | obrigatório, cifrado (seção 4) |
+| Telefone | obrigatório |
+| Foto | opcional |
+
+Uso do sexo e do nascimento ao entrar num time *(proposta)*:
+
+- Time **masculino** com pessoa de sexo **feminino**, ou o contrário: o sistema **avisa** o técnico, o gestor e o admin e mostra o alerta no elenco. **Não bloqueia**, porque ligas amadoras têm exceções e o admin pode autorizar.
+- Time **misto**: qualquer sexo.
+- **Sub-N:** a pessoa que passa da idade da sub no ano do campeonato gera o mesmo tipo de alerta.
+- O sexo aparece para a comissão técnica do time e para o próprio jogador; não aparece em lista pública nem no jogo ao vivo.
+
 ## 5. Times por esporte e categoria, troca de time e separação por esporte
 
-**Um time é a combinação de esporte e categoria** dentro da organização. Exemplo da Falcons:
+**Um time é a combinação de esporte, categoria e faixa etária** dentro da organização. Exemplo da Falcons:
 
 ```
 Falcons (organização)
-├── Vôlei    ├── Masculino   → time "Vôlei Masculino"
-│            └── Feminino    → time "Vôlei Feminino"
-├── Futsal   ├── Masculino   → time "Futsal Masculino"
-│            └── Feminino    → time "Futsal Feminino"
+├── Vôlei    ├── Masculino   → "Vôlei Masculino" (adulto), "Vôlei Masculino Sub-17"
+│            └── Feminino    → "Vôlei Feminino" (adulto), "Vôlei Feminino Sub-17"
+├── Futsal   ├── Masculino   → "Futsal Masculino", "Futsal Masculino Sub-15"
+│            └── Feminino    → "Futsal Feminino"
 └── Basquete └── ...
 ```
 
 - A categoria aceita **masculino, feminino e misto**. O modelo já tem `teams.category` com esses três valores.
-- Não pode haver dois times com o mesmo esporte e a mesma categoria (e a mesma faixa etária, quando existir). Falta essa trava no banco.
+- **Faixa etária:** vazia significa adulto/livre; as subs (sub-11, sub-13, sub-15, sub-17, sub-20 etc.) são times à parte, cada um com elenco, agenda e nota próprios. O modelo já tem `teams.age_group` (texto curto como `sub17`; vazio é adulto).
+- **Trava de time único:** não pode haver dois times com o mesmo esporte, a mesma categoria **e** a mesma faixa etária na organização. Falta essa trava no banco.
 - Código de convite, elenco, agenda, escalação, estatísticas e nota são **por time**, então masculino e feminino nunca se misturam.
 - O seletor de time agrupa por esporte e depois por categoria. Quem está em só um time entra direto.
 - A categoria muda o nome e o agrupamento; **o layout e as funções vêm do esporte**, não da categoria.
@@ -108,7 +135,7 @@ Falcons (organização)
 - O cadastro pessoal é um só: nome, foto, CPF, telefone e nascimento. Mudar o telefone vale para todas as modalidades.
 - O **número da camisa é único por time**, não por pessoa: dois atletas não repetem camisa no mesmo time, mas o mesmo número pode existir em times diferentes.
 - A nota é calculada com o módulo do esporte do time (`src/sports`), então o mesmo atleta pode ter 82 no vôlei e 67 no futsal.
-- O sistema **não guarda o sexo da pessoa** e não impede alguém de entrar num time de outra categoria: quem controla isso é o código, que o técnico ou o admin só entrega a quem deve entrar. *(proposta)*
+- O sistema **guarda o sexo informado na inscrição** (seção 4A) e usa esse dado para avisar quando alguém entra numa categoria diferente. O código continua sendo o controle principal: quem o entrega decide quem entra.
 
 ## 6. Agendar jogo e registrar pontos
 
@@ -128,8 +155,8 @@ Dois momentos no mesmo fluxo:
 | Card | Tarefa | Depende de |
 |---|---|---|
 | 00023 | Este documento e a atualização do plano | nada |
-| 00024 | Papel de gestor, código do time (admin gera qualquer papel; técnico e gestor só jogador), trava de um time por esporte e categoria, regras de acesso no banco, com testes de RLS | 00023 validado |
-| 00025 | Atletas, vínculo por esporte e CPF seguro (criptografia, índice cego, RPC auditada) | 00024 |
+| 00024 | Papel de gestor, código do time (admin gera qualquer papel; técnico e gestor só jogador), trava de um time por esporte, categoria e faixa etária, criação de time por admin, gestor e técnico, regras de acesso no banco, com testes de RLS | 00023 validado |
+| 00025 | Atletas (com sexo e nascimento), vínculo por time e CPF seguro (criptografia, índice cego, RPC auditada), com alertas de categoria e de sub | 00024 |
 | 00026 | Motor de pontuação ao vivo em `src/sports` (lances → placar e estatísticas, desfazer) | nada (código puro) |
 | 00027 | Agenda de jogos e registro dos lances (tabelas, RPC, rotas) | 00024 e 00026 |
 | 00028 | Telas: seletor de time, agenda, jogo ao vivo | 00027 e o layout (card 00031) |
@@ -139,9 +166,10 @@ Os números 00019 a 00022 dos PRs anteriores foram escolhidos sem consultar o Tr
 ## 8. Para o Thiago confirmar
 
 1. Gestor pode **revelar** o CPF (com auditoria) ou só ver mascarado?
-2. Código de técnico e de gestor com **1 uso** está bom?
-3. Quem entra por um código enviado pelo técnico ganha o acesso de jogador **na hora** (com senha e 2FA), ou o técnico/admin aprova antes?
+2. Código de técnico e de gestor (gerado pelo admin) com **1 uso** está bom?
+3. Quem entra por código enviado pelo técnico ou pelo gestor ganha o acesso de jogador **na hora** (com senha e 2FA), ou alguém aprova antes?
 4. Telefone e nascimento sem criptografia de campo está aceitável?
-5. O gestor também pode convidar jogadores, como o técnico?
-6. Faixa etária (sub-17 etc.) entra já na trava de time único ou fica para depois?
-7. Ninguém é impedido de entrar num time de outra categoria (controle só pelo código). Está bom?
+5. **Criar time** por admin, gestor e técnico: foi isso que você quis dizer? E o criador fica com o mesmo papel dele no time novo?
+6. Sexo e idade diferentes da categoria só **avisam** (padrão), ou devem **bloquear** a entrada até o admin liberar?
+
+Já respondidas em 2026-11-02: o gestor também convida jogador; as subs são times separados; a inscrição tem o campo sexo.
