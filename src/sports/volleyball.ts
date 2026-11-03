@@ -9,17 +9,19 @@ import type {
 } from "./types";
 
 /**
- * Quadra vista de cima, rede no topo: linha da frente P4 P3 P2, fundo P5 P6 P1.
- * O líbero (L) fica fora do desenho da rotação e entra no lugar de um central.
+ * Meia quadra vista de cima: rede no topo, linha de ataque no meio.
+ * Linha da frente (P4 P3 P2) entre a rede e a linha de ataque; fundo (P5 P6 P1) depois dela.
+ * O líbero (L) fica no canto, dentro do desenho (o botão tem até 68 px e não pode vazar),
+ * fora da rotação, e entra no lugar de um jogador de fundo.
  */
 const COURT: Record<string, { x: number; y: number }> = {
-  P4: { x: 17, y: 25 },
-  P3: { x: 50, y: 25 },
-  P2: { x: 83, y: 25 },
-  P5: { x: 17, y: 75 },
-  P6: { x: 50, y: 75 },
-  P1: { x: 83, y: 75 },
-  L: { x: 95, y: 95 },
+  P4: { x: 17, y: 24 },
+  P3: { x: 50, y: 24 },
+  P2: { x: 83, y: 24 },
+  P5: { x: 17, y: 64 },
+  P6: { x: 50, y: 64 },
+  P1: { x: 83, y: 64 },
+  L: { x: 92, y: 90 },
 };
 
 const POSITION_LABELS: Record<string, string> = {
