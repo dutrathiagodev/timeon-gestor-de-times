@@ -19,7 +19,8 @@ Documento de passagem: qualquer pessoa ou agente que assumir o repositório deve
 | Segurança | RLS só `authenticated`, anon sem privilégios, API com allowlist/CSRF/2FA, fotos privadas com URL assinada, `npm audit` 0 |
 | Fundação multi-time (00017) | migrations e 26 testes de RLS prontos; **não aplicadas ao banco de produção** |
 | Layout novo | aguardando o usuário (card 00031) |
-| Plano multi-esporte | aguardando validação do usuário (card 00030) |
+| Plano multi-esporte | decisões do dono registradas em `docs/backlog/2026-11-02-decisoes-acesso-e-jogos.md` (papéis, CPF seguro, convite por código, jogos); faltam 4 confirmações na seção 8 do documento |
+| Código novo sem uso nas telas | `src/sports` (registro, OVR, ajuste do treinador, escalação) e componentes `rating-card` e `lineup-board`; ligar às telas depende do banco novo e do layout (00031) |
 
 Backlog (cards 00017 a 00028) em `docs/backlog/2026-10-30-gestor-multi-esporte.md` (+ `-flow.html` e `-scheme.html`). Próximo passo técnico: **00018, registro de esportes em `src/sports`**.
 
@@ -64,7 +65,7 @@ Para tirar print/inspecionar telas sem login, use uma **cópia** do projeto fora
 ## Pendências do dono do projeto
 
 1. Mergear os releases abertos para `main` (produção).
-2. Card 00030: validar o plano multi-esporte (perguntas Q3 a Q10).
+2. Card 00030: responder as 4 perguntas da seção 8 de `docs/backlog/2026-11-02-decisoes-acesso-e-jogos.md` (gestor revela CPF? código de 1 uso para técnico e gestor? aceitar convite libera na hora? telefone sem criptografia de campo?).
 3. Card 00031: enviar o layout novo (design e animações).
 4. Aplicar a migration da 00017 no Supabase só depois de validar o plano (`supabase db push`).
 5. Decidir sobre o arquivo `LICENSE` (o README não declara licença).
