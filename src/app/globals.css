@@ -1560,6 +1560,28 @@ textarea.form-input {
   margin: 0;
 }
 
+/* Faixas da nota. Ouro é o visual base; as outras só trocam o fundo. */
+.overall-card.is-elite {
+  border-color: rgba(255, 106, 26, 0.5);
+  background:
+    radial-gradient(circle at top center, rgba(255, 255, 255, 0.32), transparent 36%),
+    linear-gradient(180deg, rgba(255, 233, 170, 0.96), rgba(232, 165, 52, 0.9));
+}
+
+.overall-card.is-silver {
+  border-color: rgba(190, 196, 206, 0.5);
+  background:
+    radial-gradient(circle at top center, rgba(255, 255, 255, 0.3), transparent 36%),
+    linear-gradient(180deg, rgba(240, 242, 245, 0.95), rgba(168, 176, 190, 0.85));
+}
+
+.overall-card.is-bronze {
+  border-color: rgba(176, 112, 64, 0.4);
+  background:
+    radial-gradient(circle at top center, rgba(255, 255, 255, 0.22), transparent 36%),
+    linear-gradient(180deg, rgba(240, 214, 190, 0.94), rgba(176, 118, 76, 0.8));
+}
+
 .leader-index {
   width: 32px;
   height: 32px;
