@@ -14,7 +14,7 @@
 4. **Quatro tipos de acesso:** admin, gestor, técnico e jogador (seção 2). **O admin concede qualquer acesso; o técnico só convida jogador para o próprio time** (seção 3).
 5. **Entra na plataforma só quem aceita um convite ou quem tem o registro criado por um admin.** Não existe cadastro aberto.
 6. **No início o convite é um código do time**, que o técnico pode enviar (por código ou por link) para a pessoa entrar como **jogador** (seção 3).
-7. **Jogador em dois ou mais times** (por exemplo vôlei e futsal): ele tem **pontos do vôlei e pontos do futsal**, cada um com as próprias estatísticas, sem mistura (seção 5).
+7. **Jogador em quantas modalidades quiser** (vôlei e futsal são só exemplos; pode ser todas): **um login só**, e os dados ficam **separados em cada modalidade**: posição, **número da camisa**, estatísticas, pontos e nota (seção 5).
 8. **Agendar jogo e registrar o que aconteceu** para gerenciar os pontos (seção 6).
 9. **Ordem dos esportes:** não há ordem específica. Os seis módulos já existem no código; o que muda o ritmo é só o time que a atlética criar.
 
@@ -104,7 +104,9 @@ Falcons (organização)
 - A conta é uma só. Depois do login a pessoa vê os **times em que tem papel**; se for um só, entra direto.
 - A URL carrega o time (`/t/[time]/...`); a sidebar tem a troca rápida entre times.
 - O módulo do esporte do time define posições, escalação, estatísticas, placar e nota. Ao trocar de time o layout e as funcionalidades mudam junto (um único componente por função, alimentado por `src/sports`).
-- Quem joga em dois esportes tem **um perfil esportivo por time**: posição, camisa, estatísticas, histórico e nota **nunca se misturam**. Vôlei e futsal têm cada um os seus pontos, e a nota do vôlei não influencia a do futsal. Os dados pessoais (nome, foto, CPF) são um só.
+- Quem joga várias modalidades tem **um login e um cadastro pessoal**, e **um perfil esportivo por time**. Tudo o que é do esporte fica no perfil e **nunca se mistura**: posição, **número da camisa**, estatísticas, pontos, histórico e nota. Pode ser camisa 10 no vôlei e 7 no futsal; a nota do vôlei não influencia a do futsal. Não há limite de modalidades por pessoa.
+- O cadastro pessoal é um só: nome, foto, CPF, telefone e nascimento. Mudar o telefone vale para todas as modalidades.
+- O **número da camisa é único por time**, não por pessoa: dois atletas não repetem camisa no mesmo time, mas o mesmo número pode existir em times diferentes.
 - A nota é calculada com o módulo do esporte do time (`src/sports`), então o mesmo atleta pode ter 82 no vôlei e 67 no futsal.
 - O sistema **não guarda o sexo da pessoa** e não impede alguém de entrar num time de outra categoria: quem controla isso é o código, que o técnico ou o admin só entrega a quem deve entrar. *(proposta)*
 
