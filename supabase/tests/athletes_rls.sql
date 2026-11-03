@@ -64,6 +64,19 @@ $$;
 create function t.get(key text) returns text language sql as $$ select v from t.store where k = key; $$;
 -- CPF "cifrado" de mentira com o tamanho certo (40 bytes) e indice cego de 32 bytes.
 create function t.ct(seed text) returns bytea language sql as $$ select decode(repeat(seed, 40), 'hex'); $$;
+-- Texto cifrado de mentira: telefone (39 a 42 bytes) e data de nascimento (39 bytes).
+create function t.ph(seed text) returns bytea language sql as $$ select decode(repeat(seed, 39), 'hex'); $$;
+create function t.bd(seed text default 'bd') returns bytea language sql as $$ select decode(repeat(seed, 39), 'hex'); $$;
+-- Atalhos com a data em texto: tiram o ano e usam a data cifrada de mentira.
+create function t.reg_me(org uuid, name text, nick text, sex text, birth text, seed text default 'bd') returns uuid language sql as $$
+  select public.register_my_athlete(org, name, nick, sex, extract(year from birth::date)::smallint, t.bd(seed));
+$$;
+create function t.reg_staff(org uuid, name text, nick text, sex text, birth text, seed text default 'bd') returns uuid language sql as $$
+  select public.register_athlete(org, name, nick, sex, extract(year from birth::date)::smallint, t.bd(seed));
+$$;
+create function t.fix_identity(athlete uuid, sex text, birth text, seed text default 'bd') returns void language sql as $$
+  select public.correct_athlete_identity(athlete, sex, extract(year from birth::date)::smallint, t.bd(seed));
+$$;
 create function t.bi(seed text) returns bytea language sql as $$ select decode(repeat(seed, 32), 'hex'); $$;
 
 -- Posicoes dos esportes ----------------------------------------------------------------------------------------
@@ -75,25 +88,25 @@ select t.expect('goleiro existe no futsal e libero so no volei',
 
 -- Inscricao pela propria pessoa -------------------------------------------------------------------------------------
 select t.as_user(:'u8');
-select t.expect_error('sem vinculo nao se inscreve', format('select public.register_my_athlete(%L, %L, %L, %L, %L)', :'orgA', 'Intruso Silva', null, 'male', '2000-01-01'), '42501');
+select t.expect_error('sem vinculo nao se inscreve', format('select t.reg_me(%L, %L, %L, %L, %L)', :'orgA', 'Intruso Silva', null, 'male', '2000-01-01'), '42501');
 reset role;
 select t.as_user(:'u6');
-select t.put('ath6', public.register_my_athlete(:'orgA', '  Ana Souza  ', 'Aninha', 'female', '2004-05-10')::text);
+select t.put('ath6', t.reg_me(:'orgA', '  Ana Souza  ', 'Aninha', 'female', '2004-05-10')::text);
 select t.expect('jogadora se inscreve e o nome vem sem espacos sobrando', (select full_name from public.athletes where id = t.get('ath6')::uuid) = 'Ana Souza');
 select t.expect('o cadastro fica ligado a conta', (select user_id from public.athletes where id = t.get('ath6')::uuid) = :'u6');
 select t.expect('entra no elenco do time em que ja tinha acesso', (select count(*) from public.team_members where athlete_id = t.get('ath6')::uuid and team_id = :'tA1') = 1);
 select t.expect('sem posicao e sem camisa ate o tecnico definir', (select position is null and shirt_number is null from public.team_members where athlete_id = t.get('ath6')::uuid));
-select t.expect_error('inscrever de novo na mesma organizacao', format('select public.register_my_athlete(%L, %L, %L, %L, %L)', :'orgA', 'Ana Souza', null, 'female', '2004-05-10'), '23505');
+select t.expect_error('inscrever de novo na mesma organizacao', format('select t.reg_me(%L, %L, %L, %L, %L)', :'orgA', 'Ana Souza', null, 'female', '2004-05-10'), '23505');
 reset role;
 select t.as_user(:'u7');
-select t.put('ath7', public.register_my_athlete(:'orgA', 'Bruno Lima', null, 'male', '2001-02-03')::text);
-select t.expect_error('sexo invalido', format('select public.register_my_athlete(%L, %L, %L, %L, %L)', :'orgB', 'X Y', null, 'other', '2000-01-01'), '42501');
+select t.put('ath7', t.reg_me(:'orgA', 'Bruno Lima', null, 'male', '2001-02-03')::text);
+select t.expect_error('sexo invalido', format('select t.reg_me(%L, %L, %L, %L, %L)', :'orgB', 'X Y', null, 'other', '2000-01-01'), '42501');
 reset role;
 select t.as_user(:'u10');
-select t.expect_error('data no futuro', format('select public.register_athlete(%L, %L, %L, %L, %L)', :'orgB', 'Futuro Silva', null, 'male', (current_date + 1)::text), '22023');
-select t.expect_error('data antes de 1900', format('select public.register_athlete(%L, %L, %L, %L, %L)', :'orgB', 'Antigo Silva', null, 'male', '1899-12-31'), '22023');
-select t.expect_error('sexo fora de masculino e feminino', format('select public.register_athlete(%L, %L, %L, %L, %L)', :'orgB', 'Sem Sexo', null, 'other', '2000-01-01'), '23514');
-select t.expect_error('nome curto demais', format('select public.register_athlete(%L, %L, %L, %L, %L)', :'orgB', 'A', null, 'male', '2000-01-01'), '23514');
+select t.expect_error('ano de nascimento no futuro', format('select t.reg_staff(%L, %L, %L, %L, %L)', :'orgB', 'Futuro Silva', null, 'male', '2999-01-01'), '22023');
+select t.expect_error('data antes de 1900', format('select t.reg_staff(%L, %L, %L, %L, %L)', :'orgB', 'Antigo Silva', null, 'male', '1899-12-31'), '22023');
+select t.expect_error('sexo fora de masculino e feminino', format('select t.reg_staff(%L, %L, %L, %L, %L)', :'orgB', 'Sem Sexo', null, 'other', '2000-01-01'), '23514');
+select t.expect_error('nome curto demais', format('select t.reg_staff(%L, %L, %L, %L, %L)', :'orgB', 'A', null, 'male', '2000-01-01'), '23514');
 reset role;
 
 -- Leitura do cadastro -------------------------------------------------------------------------------------------------
@@ -102,7 +115,7 @@ select t.expect('jogadora ve so o proprio cadastro', (select count(*) from publi
 select t.expect('jogadora ve so o proprio perfil esportivo', (select count(*) from public.team_members) = 1);
 reset role;
 select t.as_user(:'u3');
-select t.expect('tecnico ve o cadastro (com sexo e nascimento) dos atletas do time', (select count(*) from public.athletes where sex is not null and birth_date is not null) = 2);
+select t.expect('tecnico ve o cadastro (com sexo e nascimento) dos atletas do time', (select count(*) from public.athletes where sex is not null and birth_year is not null) = 2);
 select t.expect('tecnico ve o elenco do time', (select count(*) from public.team_members) = 2);
 reset role;
 select t.as_user(:'u9');
@@ -117,17 +130,17 @@ reset role;
 
 -- Cadastro por admin e gestor ----------------------------------------------------------------------------------------------
 select t.as_user(:'u4');
-select t.put('ath_staff', public.register_athlete(:'orgA', 'Carla Dias', null, 'female', '1999-09-09')::text);
+select t.put('ath_staff', t.reg_staff(:'orgA', 'Carla Dias', null, 'female', '1999-09-09')::text);
 select t.expect('gestor cadastra atleta sem conta', (select user_id is null from public.athletes where id = t.get('ath_staff')::uuid));
 reset role;
 select t.as_user(:'u3');
-select t.expect_error('tecnico nao cadastra atleta', format('select public.register_athlete(%L, %L, %L, %L, %L)', :'orgA', 'Nao Pode', null, 'male', '2000-01-01'), '42501');
+select t.expect_error('tecnico nao cadastra atleta', format('select t.reg_staff(%L, %L, %L, %L, %L)', :'orgA', 'Nao Pode', null, 'male', '2000-01-01'), '42501');
 reset role;
 select t.as_user(:'u8');
-select t.expect_error('sem vinculo nao cadastra atleta', format('select public.register_athlete(%L, %L, %L, %L, %L)', :'orgA', 'Nao Pode', null, 'male', '2000-01-01'), '42501');
+select t.expect_error('sem vinculo nao cadastra atleta', format('select t.reg_staff(%L, %L, %L, %L, %L)', :'orgA', 'Nao Pode', null, 'male', '2000-01-01'), '42501');
 reset role;
 select t.as_user(:'u2');
-select t.put('ath_admin', public.register_athlete(:'orgA', 'Davi Rocha', 'Davizinho', 'male', '2008-12-31')::text);
+select t.put('ath_admin', t.reg_staff(:'orgA', 'Davi Rocha', 'Davizinho', 'male', '2008-12-31')::text);
 select t.expect('admin cadastra atleta', true);
 reset role;
 
@@ -160,7 +173,7 @@ select t.expect('mesma pessoa, outro time: o mesmo numero de camisa pode existir
 select t.expect('posicao e camisa de cada time sao independentes', (select position from public.team_members where athlete_id = t.get('ath6')::uuid and team_id = :'tA3') = 'outside' and (select position from public.team_members where athlete_id = t.get('ath6')::uuid and team_id = :'tA1') = 'setter');
 reset role;
 select t.as_user(:'u10');
-select public.register_athlete(:'orgB', 'Elisa Prado', null, 'female', '2000-04-04');
+select t.reg_staff(:'orgB', 'Elisa Prado', null, 'female', '2000-04-04');
 select t.expect_error('atleta de uma organizacao nao entra em time de outra', format('select public.add_athlete_to_team(%L, %L)', :'tB1', t.get('ath6')), '23514');
 reset role;
 
@@ -174,43 +187,46 @@ select t.expect('voltar reativa o mesmo perfil', (select status from public.team
 
 -- Identidade: sexo e nascimento ------------------------------------------------------------------------------------------------------------
 select t.as_user(:'u6');
-select t.expect_error('a pessoa nao corrige o proprio sexo', format('select public.correct_athlete_identity(%L, %L, %L)', t.get('ath6'), 'male', '2004-05-10'), '42501');
+select t.expect_error('a pessoa nao corrige o proprio sexo', format('select t.fix_identity(%L, %L, %L)', t.get('ath6'), 'male', '2004-05-10'), '42501');
 select public.update_athlete_profile(t.get('ath6')::uuid, 'Ana Souza Lima', 'Ana');
 select t.expect('a pessoa muda nome e nome de camisa', (select full_name = 'Ana Souza Lima' and nickname = 'Ana' from public.athletes where id = t.get('ath6')::uuid));
 select t.expect_error('nao muda o cadastro de outra pessoa', format('select public.update_athlete_profile(%L, %L, %L)', t.get('ath7'), 'Outro Nome', null), '42501');
 select t.expect_error('UPDATE direto em athletes negado', format('update public.athletes set sex = %L where id = %L', 'male', t.get('ath6')), '42501');
 reset role;
 select t.as_user(:'u3');
-select t.expect_error('tecnico nao corrige identidade', format('select public.correct_athlete_identity(%L, %L, %L)', t.get('ath6'), 'female', '2004-05-10'), '42501');
+select t.expect_error('tecnico nao corrige identidade', format('select t.fix_identity(%L, %L, %L)', t.get('ath6'), 'female', '2004-05-10'), '42501');
 reset role;
 select t.as_user(:'u4');
-select public.correct_athlete_identity(t.get('ath6')::uuid, 'female', '2004-05-11');
-select t.expect('gestor corrige a data de nascimento', (select birth_date = date '2004-05-11' from public.athletes where id = t.get('ath6')::uuid));
-select t.expect_error('data de nascimento no futuro na correcao', format('select public.correct_athlete_identity(%L, %L, %L)', t.get('ath6'), 'female', (current_date + 5)::text), '22023');
+select t.fix_identity(t.get('ath6')::uuid, 'female', '2005-05-11', 'cd');
+select t.expect('gestor corrige o ano de nascimento', (select birth_year = 2005 from public.athletes where id = t.get('ath6')::uuid));
+select t.expect('e a data cifrada nova entra no lugar da antiga', (select birth_date_ciphertext = t.bd('cd') from public.read_athlete_private(t.get('ath6')::uuid)));
+select t.expect_error('ano de nascimento no futuro na correcao', format('select t.fix_identity(%L, %L, %L)', t.get('ath6'), 'female', '2999-01-01'), '22023');
 reset role;
 
 -- CPF e telefone -----------------------------------------------------------------------------------------------------------------------------------
 select t.as_user(:'u2');
 select t.expect_error('admin nao le athlete_private direto', 'select * from public.athlete_private', '42501');
-select t.expect_error('admin nao grava athlete_private direto', format('insert into public.athlete_private (athlete_id, organization_id, cpf_ciphertext, cpf_blind_index, key_version) values (%L, %L, %L, %L, 1)', t.get('ath6'), :'orgA', t.ct('ab'), t.bi('cd')), '42501');
+select t.expect_error('admin nao grava athlete_private direto', format('insert into public.athlete_private (athlete_id, organization_id, cpf_ciphertext, cpf_blind_index) values (%L, %L, %L, %L)', t.get('ath6'), :'orgA', t.ct('ab'), t.bi('cd')), '42501');
 reset role;
 
 select t.as_user(:'u6');
-select public.set_athlete_private(t.get('ath6')::uuid, t.ct('ab'), t.bi('01'), 1::smallint, '(71) 99999-1234');
+select public.set_athlete_private(t.get('ath6')::uuid, t.ct('ab'), t.bi('01'), t.ph('a1'));
 select t.expect('a propria pessoa grava o CPF', (select cpf_registered from public.athletes where id = t.get('ath6')::uuid));
 reset role;
-select t.expect('telefone guardado so com digitos', (select phone from public.athlete_private where athlete_id = t.get('ath6')::uuid) = '71999991234');
+select t.expect('telefone e data guardados so cifrados, com tamanho fixo', (select phone_ciphertext = t.ph('a1') and octet_length(birth_date_ciphertext) = 39 from public.athlete_private where athlete_id = t.get('ath6')::uuid));
+select t.expect('a tabela athletes nao tem mais data de nascimento em claro', not exists (select 1 from information_schema.columns where table_schema = 'public' and table_name = 'athletes' and column_name = 'birth_date'));
 select t.expect('o texto cifrado tem 40 bytes e o indice 32', (select octet_length(cpf_ciphertext) = 40 and octet_length(cpf_blind_index) = 32 from public.athlete_private where athlete_id = t.get('ath6')::uuid));
 
 select t.as_user(:'u6');
-select t.expect_error('texto cifrado do tamanho de um CPF em claro e recusado', format('select public.set_athlete_private(%L, %L, %L, 1::smallint)', t.get('ath6'), decode('3532393938323234373235', 'hex'), t.bi('01')), '23514');
-select t.expect_error('indice cego de tamanho errado', format('select public.set_athlete_private(%L, %L, %L, 1::smallint)', t.get('ath6'), t.ct('ab'), decode('0102', 'hex')), '23514');
-select t.expect_error('versao de chave invalida', format('select public.set_athlete_private(%L, %L, %L, 0::smallint)', t.get('ath6'), t.ct('ab'), t.bi('01')), '23514');
-select t.expect_error('telefone curto', format('select public.set_athlete_private(%L, %L, %L, 1::smallint, %L)', t.get('ath6'), t.ct('ab'), t.bi('01'), '1234'), '23514');
-select t.expect_error('jogador nao grava CPF de outro', format('select public.set_athlete_private(%L, %L, %L, 1::smallint)', t.get('ath7'), t.ct('ab'), t.bi('02')), '42501');
+select t.expect_error('texto cifrado do tamanho de um CPF em claro e recusado', format('select public.set_athlete_private(%L, %L, %L)', t.get('ath6'), decode('3532393938323234373235', 'hex'), t.bi('01')), '23514');
+select t.expect_error('indice cego de tamanho errado', format('select public.set_athlete_private(%L, %L, %L)', t.get('ath6'), t.ct('ab'), decode('0102', 'hex')), '23514');
+select t.expect_error('CPF sem indice cego (vem junto ou nao vem)', format('select public.set_athlete_private(%L, %L)', t.get('ath6'), t.ct('ab')), '22023');
+select t.expect_error('nada para gravar', format('select public.set_athlete_private(%L)', t.get('ath6')), '22023');
+select t.expect_error('telefone com tamanho de numero em claro e recusado', format('select public.set_athlete_private(%L, null, null, %L)', t.get('ath6'), decode('0102030405060708090a0b0c0d', 'hex')), '23514');
+select t.expect_error('jogador nao grava CPF de outro', format('select public.set_athlete_private(%L, %L, %L)', t.get('ath7'), t.ct('ab'), t.bi('02')), '42501');
 reset role;
 select t.as_user(:'u3');
-select t.expect_error('tecnico nao grava CPF', format('select public.set_athlete_private(%L, %L, %L, 1::smallint)', t.get('ath7'), t.ct('ab'), t.bi('02')), '42501');
+select t.expect_error('tecnico nao grava CPF', format('select public.set_athlete_private(%L, %L, %L)', t.get('ath7'), t.ct('ab'), t.bi('02')), '42501');
 select t.expect_error('tecnico nao le CPF', format('select * from public.read_athlete_private(%L)', t.get('ath6')), '42501');
 select t.expect_error('tecnico nao procura CPF', format('select public.find_athlete_by_cpf_index(%L, %L)', :'orgA', t.bi('01')), '42501');
 reset role;
@@ -230,25 +246,31 @@ select t.expect_error('sem vinculo nao le CPF', format('select * from public.rea
 reset role;
 
 select t.as_user(:'u4');
-select public.set_athlete_private(t.get('ath7')::uuid, t.ct('ef'), t.bi('02'), 1::smallint);
-select public.set_athlete_private(t.get('ath_staff')::uuid, t.ct('12'), t.bi('03'), 1::smallint);
+select public.set_athlete_private(t.get('ath7')::uuid, t.ct('ef'), t.bi('02'));
+select public.set_athlete_private(t.get('ath_staff')::uuid, t.ct('12'), t.bi('03'));
 select t.expect('quem cadastrou (e e gestor) grava o CPF antes de ter time', (select cpf_registered from public.athletes where id = t.get('ath_staff')::uuid));
 select t.expect('gestor do time grava o CPF', (select cpf_registered from public.athletes where id = t.get('ath7')::uuid));
-select t.expect_error('mesmo CPF (indice) para outra pessoa da organizacao', format('select public.set_athlete_private(%L, %L, %L, 1::smallint)', t.get('ath_staff'), t.ct('ab'), t.bi('01')), '23505');
+select t.expect_error('mesmo CPF (indice) para outra pessoa da organizacao', format('select public.set_athlete_private(%L, %L, %L)', t.get('ath_staff'), t.ct('ab'), t.bi('01')), '23505');
 select t.expect('gestor acha duplicado pelo indice cego', public.find_athlete_by_cpf_index(:'orgA', t.bi('01')) = t.get('ath6')::uuid);
 select t.expect('indice que nao existe devolve nulo', public.find_athlete_by_cpf_index(:'orgA', t.bi('99')) is null);
 select t.expect('gestor le o CPF (cifrado)', (select cpf_ciphertext = t.ct('ab') from public.read_athlete_private(t.get('ath6')::uuid)));
 reset role;
 select t.as_user(:'u10');
 select t.put('athB', (select id::text from public.athletes where organization_id = :'orgB' limit 1));
-select public.set_athlete_private(t.get('athB')::uuid, t.ct('ab'), t.bi('01'), 1::smallint);
+select public.set_athlete_private(t.get('athB')::uuid, t.ct('ab'), t.bi('01'));
 select t.expect('o mesmo indice em outra organizacao e permitido', true);
 reset role;
 select t.as_user(:'u2');
-select t.expect('admin le o CPF (cifrado)', (select key_version = 1 from public.read_athlete_private(t.get('ath6')::uuid)));
+select t.expect('admin le o CPF, o telefone e a data, todos cifrados', (select cpf_ciphertext = t.ct('ab') and phone_ciphertext = t.ph('a1') and birth_date_ciphertext = t.bd('cd') from public.read_athlete_private(t.get('ath6')::uuid)));
 reset role;
 select t.as_user(:'u6');
 select t.expect('a propria pessoa le o proprio CPF', (select cpf_ciphertext = t.ct('ab') from public.read_athlete_private(t.get('ath6')::uuid)));
+select public.set_athlete_private(t.get('ath6')::uuid, null, null, t.ph('a2'));
+select t.expect('gravar so o telefone nao apaga o CPF', (select cpf_registered from public.athletes where id = t.get('ath6')::uuid) and (select cpf_ciphertext = t.ct('ab') and phone_ciphertext = t.ph('a2') from public.read_athlete_private(t.get('ath6')::uuid)));
+reset role;
+select t.as_user(:'u2');
+select t.expect_error('cadastro sem a data de nascimento cifrada e recusado', format('select public.register_athlete(%L, %L, %L, %L, 2000::smallint, null)', :'orgA', 'Sem Data', null, 'male'), '22023');
+select t.expect_error('data cifrada com tamanho errado (data em claro)', format('select public.register_athlete(%L, %L, %L, %L, 2000::smallint, %L)', :'orgA', 'Data Clara', null, 'male', decode('323030302d30312d3031', 'hex')), '23514');
 reset role;
 
 -- Apagar os dados protegidos -----------------------------------------------------------------------------------------------------------------------------
@@ -266,7 +288,11 @@ select t.expect('a propria pessoa apaga o proprio CPF', not (select cpf_register
 reset role;
 
 -- Auditoria ------------------------------------------------------------------------------------------------------------------------------------------------------
-select t.expect('leituras do CPF foram auditadas, uma por leitura (gestor, admin e a pessoa)', (select count(*) from public.audit_events where action = 'athlete_private.read') = 3);
+select t.expect('cada leitura foi auditada, uma por leitura (5 no total)', (select count(*) from public.audit_events where action = 'athlete_private.read') = 5);
+select t.expect('e dividida por quem leu: gestor 2, admin 1, a pessoa 2',
+  (select count(*) from public.audit_events where action = 'athlete_private.read' and actor_id = :'u4') = 2
+  and (select count(*) from public.audit_events where action = 'athlete_private.read' and actor_id = :'u2') = 1
+  and (select count(*) from public.audit_events where action = 'athlete_private.read' and actor_id = :'u6') = 2);
 select t.expect('a auditoria diz quem leu',
   exists (select 1 from public.audit_events where action = 'athlete_private.read' and actor_id = :'u4' and entity_id = t.get('ath6')::uuid)
   and exists (select 1 from public.audit_events where action = 'athlete_private.read' and actor_id = :'u2')
@@ -277,7 +303,7 @@ select t.expect('auditou gravar, procurar, apagar, cadastrar, corrigir e perfil 
 select t.expect('leitura negada nao gera auditoria de leitura',
   (select count(*) from public.audit_events where action = 'athlete_private.read' and actor_id in (:'u3', :'u9', :'u8', :'u10')) = 0);
 select t.expect('a auditoria nunca guarda texto cifrado, indice, telefone nem nomes',
-  not exists (select 1 from public.audit_events where data::text ~* '(abab|0101|7199999|ana souza)'));
+  not exists (select 1 from public.audit_events where data::text ~* '(abab|0101|a1a1|bdbd|cdcd|7199999|ana souza)'));
 
 -- anon e sem sessao ------------------------------------------------------------------------------------------------------------------------------------------------
 set local role anon;
@@ -285,7 +311,7 @@ select t.expect_error('anon nao le athletes', 'select 1 from public.athletes', '
 select t.expect_error('anon nao le team_members', 'select 1 from public.team_members', '42501');
 select t.expect_error('anon nao le athlete_private', 'select 1 from public.athlete_private', '42501');
 select t.expect_error('anon nao le CPF', format('select * from public.read_athlete_private(%L)', t.get('ath6')), '42501');
-select t.expect_error('anon nao se inscreve', format('select public.register_my_athlete(%L, %L, %L, %L, %L)', :'orgA', 'Anon Silva', null, 'male', '2000-01-01'), '42501');
+select t.expect_error('anon nao se inscreve', format('select t.reg_me(%L, %L, %L, %L, %L)', :'orgA', 'Anon Silva', null, 'male', '2000-01-01'), '42501');
 reset role;
 select t.as_user('');
 select t.expect_error('sem sessao nao le CPF', format('select * from public.read_athlete_private(%L)', t.get('ath6')), '42501');

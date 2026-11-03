@@ -107,7 +107,7 @@ select t.expect('todas as RPCs de public sao SECURITY DEFINER com search_path va
     where n.nspname in ('public', 'private') and p.prokind = 'f'
       and not (p.prosecdef and exists (select 1 from unnest(p.proconfig) c where c = 'search_path=""'))
       -- as funcoes de private sem SECURITY DEFINER sao puras (sem acesso a tabela)
-      and not (n.nspname = 'private' and p.proname in ('new_invite_code', 'normalize_invite_code', 'invite_code_hash', 'valid_birth'))
+      and not (n.nspname = 'private' and p.proname in ('new_invite_code', 'normalize_invite_code', 'invite_code_hash', 'valid_birth_year'))
       and not (n.nspname = 'private' and exists (select 1 from unnest(p.proconfig) c where c = 'search_path=""') and not p.prosecdef)
   ));
 
