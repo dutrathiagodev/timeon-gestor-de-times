@@ -62,6 +62,7 @@ O mapa de módulos que alimenta menu e página inicial é `src/components/layout
 | `athletes`, `athlete_private` | cadastro e dado sensível cifrado (sem política: só funções do servidor leem) |
 | `team_invites`, `team_join_requests`, `invite_attempts` | código do time (só o hash), pedidos com aceite, trava de tentativas |
 | `audit_events` | auditoria que só acrescenta |
+| `games` | agenda de jogos do time (migration `20261103150000`, **ainda não aplicada em produção**): só administração e gestor criam, editam e homologam; técnico e jogador só leem os do próprio time; jogo homologado não muda nem some; tudo auditado |
 
 ### 4.2 Como o guia de modalidades se encaixa
 
@@ -76,7 +77,8 @@ O guia (seção 13) propõe um modelo centrado em **competição**. O TimeOn é 
 | `Rulebook` | **falta**: versão do regulamento ligada a jogo e competição |
 | `Competition`, `Division` | **não haverá**: o TimeOn não controla liga (D1). O jogo de liga é um tipo de jogo no calendário |
 | `Venue` | **falta**: locais de jogo e treino |
-| `Match`, `MatchRoster`, `MatchOfficial` | **falta**: card 00040 (agenda) |
+| `Match` | `games` (agenda pronta no banco, card 00040; telas e lances faltam) |
+| `MatchRoster`, `MatchOfficial` | **falta**: escalação do jogo e arbitragem |
 | `MatchEvent` | **falta**: card 00041; o motor `src/sports/live` já define as ações por modalidade |
 | `DisciplinaryCase` | **falta**: suspensões e recursos |
 | `AthleteAssessment`, `AssessmentItem` | **falta**: ficha de avaliação com evidência (guia, seção 10) |
