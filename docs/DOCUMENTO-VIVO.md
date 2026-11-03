@@ -82,6 +82,7 @@ Medir o sistema (guia, seção 15), quando houver dado: jogos no prazo, súmulas
 
 | Data | O que mudou |
 | --- | --- |
+| 2026-11-03 | Escalação: mais esquemas por modalidade (futsal 3-1; Fut7 3-1-2; campo 4-1-4-1, 3-4-3, 5-3-2; basquete 1-2-2, 2-1-2, 1-3-1, Horns, 4 abertos; handebol 3-3 e 2-4 no ataque, 6-0 e 5-1 na defesa). Líbero vale em todo sistema do vôlei (regra FIVB). Mover posições cria o esquema "Personalizado", que pode ser salvo com nome (por enquanto só no navegador). Falcons com um time de cada modalidade e organização Teste, ainda fixos em `src/lib/teams.ts`. |
 | 2026-11-03 | Design System v1.1 aplicado como base provisória (tokens, Inter, faixa de título, menu recolhível só com o que existe, tabelas). Tema claro com tokens prontos, ainda não ligado. |
 | 2026-11-03 | Dono respondeu D1 a D6: sem controle de liga, família e torcida sem acesso, sem mensalidade, menores com autorização dos pais e do técnico, só o gestor homologa, modalidades sempre separadas. Financeiro saiu do menu. |
 | 2026-11-03 | Banco de produção aplicado (15 de 15). Formações: futsal 1-2-1, futebol 4-3-3 com laterais; seletor de esquema (PR #49). Moldura nova com troca de organização e time, menu por papel, gestão de acesso (esqueleto) e módulos "Em breve" (PRs #50 e #51). System design e este documento. |

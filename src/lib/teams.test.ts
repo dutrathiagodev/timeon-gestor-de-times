@@ -43,3 +43,14 @@ describe("times e organizações", () => {
     expect(groups[0].teams.map((t) => t.id)).toEqual(["a", "c"]);
   });
 });
+
+describe("organizações de exemplo", () => {
+  it("Falcons tem um time de cada modalidade e Teste começa vazia", async () => {
+    const { getOrganizationOptions, getTeamOptions } = await import("@/lib/teams");
+    const { SPORT_KEYS } = await import("@/sports/registry");
+    expect(getOrganizationOptions().map((o) => o.name)).toEqual(["Falcons", "Teste"]);
+    const falcons = teamsOfOrganization(getTeamOptions(), "falcons");
+    expect(falcons.map((t) => t.sportKey).sort()).toEqual([...SPORT_KEYS].sort());
+    expect(teamsOfOrganization(getTeamOptions(), "teste")).toEqual([]);
+  });
+});

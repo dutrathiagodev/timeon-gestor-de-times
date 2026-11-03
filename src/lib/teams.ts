@@ -21,12 +21,21 @@ export type TeamOption = {
  * passarem a ler o banco novo (cards 00042 e 00043), estas funções devolvem os dados reais.
  */
 export function getOrganizationOptions(): OrganizationOption[] {
-  return [{ id: "falcons", name: "Falcons" }];
+  return [
+    { id: "falcons", name: "Falcons" },
+    { id: "teste", name: "Teste" },
+  ];
 }
 
+/** Um time de cada modalidade na Falcons (exemplo até as telas lerem o banco); a Teste começa vazia. */
 export function getTeamOptions(): TeamOption[] {
   return [
     { id: "volei", organizationId: "falcons", name: "Vôlei", sportKey: "volleyball", category: "Principal" },
+    { id: "futsal", organizationId: "falcons", name: "Futsal", sportKey: "futsal", category: "Principal" },
+    { id: "fut7", organizationId: "falcons", name: "Fut7", sportKey: "football_society", category: "Principal" },
+    { id: "futebol", organizationId: "falcons", name: "Futebol de campo", sportKey: "football_field", category: "Principal" },
+    { id: "basquete", organizationId: "falcons", name: "Basquete", sportKey: "basketball", category: "Principal" },
+    { id: "handebol", organizationId: "falcons", name: "Handebol", sportKey: "handball", category: "Principal" },
   ];
 }
 

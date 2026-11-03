@@ -39,6 +39,29 @@ export function removeAthlete(lineup: Lineup, athleteId: string): Lineup {
   return slot ? { ...lineup, [slot]: null } : lineup;
 }
 
+export const CUSTOM_FORMATION_KEY = "custom";
+
+/** Margem mínima da borda, a mesma que os esquemas prontos respeitam (o botão não vaza do campo). */
+const EDGE = 7;
+
+const clampToField = (value: number) =>
+  Math.round(Math.min(100 - EDGE, Math.max(EDGE, value)) * 10) / 10;
+
+/**
+ * Move uma posição do esquema para (x, y) em porcentagem do campo. O resultado vira
+ * o esquema "Personalizado"; as chaves dos slots não mudam, então a escalação continua valendo.
+ */
+export function moveSlot(formation: Formation, slotKey: string, x: number, y: number): Formation {
+  if (!formation.slots.some((slot) => slot.key === slotKey)) return formation;
+  return {
+    key: CUSTOM_FORMATION_KEY,
+    label: "Personalizado",
+    slots: formation.slots.map((slot) =>
+      slot.key === slotKey ? { ...slot, x: clampToField(x), y: clampToField(y) } : slot,
+    ),
+  };
+}
+
 /**
  * Troca de formação (ex.: 4-3-3 para 4-4-2) mantendo quem já estava em campo:
  * cada atleta vai para um slot livre da mesma posição; quem não encaixa ocupa
