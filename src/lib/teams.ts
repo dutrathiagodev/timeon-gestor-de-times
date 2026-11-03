@@ -40,6 +40,11 @@ export function canCreateTeam(role: OrgRole): boolean {
   return role === "admin" || role === "manager" || role === "coach";
 }
 
+/** Quem dá acesso a outras pessoas: administração e gestor. */
+export function canManageAccess(role: OrgRole): boolean {
+  return role === "admin" || role === "manager";
+}
+
 export function teamsOfOrganization(teams: TeamOption[], organizationId: string): TeamOption[] {
   return teams.filter((team) => team.organizationId === organizationId);
 }

@@ -103,5 +103,8 @@ Criada para ter onde pendurar as telas multi-esporte; o desenho final vem em out
 - `src/components/layout/app-frame.tsx`: cabecalho + menu lateral + conteudo; `/login` fica sem moldura.
 - `app-header.tsx`: marca, **organizacao** e **time** ativos (selects) e "Sair". Abaixo de 1100 px os seletores passam para o topo do menu lateral.
 - `active-context.tsx`: organizacao e time ativos, guardados no navegador (`timeon.activeOrganization`, `timeon.activeTeam`). Trocar de organizacao limpa o time. Papel do usuario (`role`) vem do servidor.
+- Menu em secoes (Principal, Gerenciar, Sistema) filtrado por papel: jogador nao ve Modalidades nem Gestao de acesso. Rodape do menu: cartao "Acesso atual", "Trocar acesso" (dialogo com organizacao e time) e "Sair".
+- `/acesso` (so administracao e gestor): esqueleto da gestao de acesso (codigo do time, pedidos pendentes, pessoas e papeis); ainda nao le nem grava no banco (card 00042).
+- Acabamento: scrolls escuros, foco visivel, "Ir para o conteudo", selos "Em breve", alvos de toque de 44 px.
 - Inicio (`/`): escolha de organizacao e lista de times por modalidade; "Criar time" so aparece para administracao, gestor e tecnico (hoje desligado, "em breve"); "Entrar com codigo" idem.
 - `src/lib/teams.ts`: de onde vem a lista. **Hoje e fixa** (so o time de volei do modelo antigo); troca pela leitura do banco novo nos cards 00042 e 00043.

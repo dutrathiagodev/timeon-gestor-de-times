@@ -20,11 +20,16 @@ export default function AppFrame({ children }: { children: ReactNode }) {
 
   return (
     <>
+      <a href="#conteudo" className="skip-link">
+        Ir para o conteúdo
+      </a>
       <AppHeader />
       <Sidebar />
       <div className="app-shell">
         <div className="app-gradient" />
-        <main className="app-main">{children}</main>
+        <main id="conteudo" tabIndex={-1} className="app-main">
+          {children}
+        </main>
       </div>
     </>
   );

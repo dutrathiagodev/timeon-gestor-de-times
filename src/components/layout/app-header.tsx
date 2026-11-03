@@ -1,23 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ChevronLeft, LogOut, Menu } from "lucide-react";
+import { ChevronLeft, ChevronsUpDown, Menu } from "lucide-react";
 import { BrandLogo } from "@/components/ui/brand-logo";
-import { apiRequest } from "@/lib/api-client";
-import { OrganizationSwitcher, TeamSwitcher } from "./active-context";
+import AccessSwitcher from "./access-switcher";
+import { useActiveContext } from "./active-context";
+import { ROLE_LABEL } from "./role-label";
 import { useSidebar } from "./sidebar-context";
 
-/** Barra do topo: marca, organização e time ativos, e saída. */
+/** Barra do topo: marca e o acesso atual (organização e time), que abre a troca. */
 export default function AppHeader() {
-  const router = useRouter();
   const { isOpen, toggleSidebar } = useSidebar();
-
-  async function handleLogout() {
-    await apiRequest("/api/auth/logout", "POST").catch(() => {});
-    router.replace("/login");
-    router.refresh();
-  }
+  const { organization, team, role } = useActiveContext();
 
   return (
     <header className="app-header">
@@ -35,15 +29,15 @@ export default function AppHeader() {
         <BrandLogo className="app-header-logo" title="" />
       </Link>
 
-      <div className="app-header-context">
-        <OrganizationSwitcher id="header-org" />
-        <TeamSwitcher id="header-team" />
-      </div>
+      <AccessSwitcher className="access-chip">
+        <span className="access-chip-text">
+          <small>{organization?.name ?? "Sem organização"}</small>
+          <strong>{team ? team.name : "Escolha um time"}</strong>
+        </span>
+        <ChevronsUpDown size={16} aria-hidden="true" />
+      </AccessSwitcher>
 
-      <button type="button" className="btn btn-secondary app-header-logout" onClick={handleLogout}>
-        <LogOut size={16} />
-        <span>Sair</span>
-      </button>
+      <span className="role-badge">{ROLE_LABEL[role]}</span>
     </header>
   );
 }

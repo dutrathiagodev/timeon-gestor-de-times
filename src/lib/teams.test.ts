@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   canCreateTeam,
+  canManageAccess,
   groupTeamsBySport,
   teamsOfOrganization,
   type TeamOption,
@@ -20,6 +21,13 @@ describe("times e organizações", () => {
     expect(canCreateTeam("manager")).toBe(true);
     expect(canCreateTeam("coach")).toBe(true);
     expect(canCreateTeam("player")).toBe(false);
+  });
+
+  it("só administração e gestor dão acesso a outras pessoas", () => {
+    expect(canManageAccess("admin")).toBe(true);
+    expect(canManageAccess("manager")).toBe(true);
+    expect(canManageAccess("coach")).toBe(false);
+    expect(canManageAccess("player")).toBe(false);
   });
 
   it("lista só os times da organização escolhida", () => {
