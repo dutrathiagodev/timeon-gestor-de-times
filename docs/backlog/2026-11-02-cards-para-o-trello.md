@@ -17,7 +17,7 @@ Etiquetas: tipo (FEATURE, TASK, CONFIG), prioridade (P0, P1, P2) e área (banco,
 | 00022 | FEATURE | Escalação visual por esporte | #35 | Componente `LineupBoard` com clique, teclado e arrastar. |
 | 00023 | TASK | Decisões de acesso, CPF e jogos | #37 | Documento de decisões de 2026-11-02. |
 | 00024 | FEATURE | Banco: papéis, criar time e código do time | #39 | Gestor, time único por esporte+categoria+faixa, código com aceite, auditoria. |
-| 00025 | FEATURE | Banco: atletas, perfil por time e CPF seguro | a abrir | Atletas, sexo, nascimento, camisa por time, CPF cifrado com leitura auditada. |
+| 00025 | FEATURE | Banco: atletas, perfil por time e CPF seguro | #41 | Atletas, sexo, nascimento, camisa por time, CPF cifrado com leitura auditada. |
 | 00026 | FEATURE | Motor de pontuação ao vivo | #38 | Lances viram placar, sets e estatísticas pela regra de cada modalidade. |
 
 ## A criar
@@ -67,19 +67,28 @@ Etiquetas: tipo (FEATURE, TASK, CONFIG), prioridade (P0, P1, P2) e área (banco,
 - **O que é:** ligar `RatingCard`, `LineupBoard` e o jogo ao vivo às telas, com o seletor de time (agrupado por esporte e categoria).
 - **Depende de:** card 00031 (layout novo) e do banco aplicado.
 
+### Endurecer o banco antes de aplicar (00038)
+- **Tipo/prioridade/área:** TASK, P1, banco.
+- **O que é:** harness que simula as permissões padrão do Supabase, auditoria de permissões, migration que revoga o que sobrava, telefone e data de nascimento cifrados (só o ano em claro), verificador somente leitura para rodar no Supabase de verdade e gerador de chaves.
+- **Por quê:** o Thiago pediu mais dados cifrados e cuidado ao subir para o banco.
+- **Depende de:** 00025. **Critérios de aceite:**
+  - [x] `run-local.sh` verde (236 verificações, auditoria de permissões, verificador)
+  - [x] migration que cifra para sem apagar dado real
+  - [ ] `supabase/verify/after-apply.sql` com as 15 linhas OK no projeto certo (Thiago)
+
 ### Privacidade do CPF (LGPD)
 - **Tipo/prioridade/área:** TASK, P1, docs.
-- **O que é:** texto da política de privacidade com a finalidade única (identificar o atleta), prazo de guarda e como pedir a exclusão; gerar e guardar as chaves do CPF fora do repositório.
+- **O que é:** revisar e publicar a política de privacidade (rascunho em `docs/legal/politica-de-privacidade.md`, com 6 decisões do dono no topo); gerar e guardar as chaves (`npm run keys:generate`, roteiro em `docs/runbooks/aplicar-banco-e-chaves.md`).
 - **Dono:** Thiago.
 - **Critérios de aceite:**
   - [ ] política publicada antes de coletar CPF de verdade
-  - [ ] chaves geradas, guardadas no cofre de senhas e configuradas na Vercel
+  - [ ] chaves `PII_*` geradas no seu terminal, guardadas em duas cópias no cofre de senhas e configuradas na Vercel
   - [ ] plano de rotação das chaves
 
 ### Aplicar as migrations no Supabase do projeto
 - **Tipo/prioridade/área:** CONFIG, P1, banco.
 - **Dono:** Thiago. **Nenhuma sessão de IA aplica migration no banco.**
-- **O que é:** conferir primeiro num projeto de desenvolvimento, depois aplicar no `plataforma-gestao-time` (`supabase db push`).
+- **O que é:** seguir `docs/runbooks/aplicar-banco-e-chaves.md`: conferir se a integração do GitHub já aplicou algo, ensaiar num projeto de desenvolvimento, aplicar no `plataforma-gestao-time` e rodar `supabase/verify/after-apply.sql`.
 - **Critérios de aceite:**
   - [ ] confirmar que o projeto é o certo antes de aplicar (ref `ncvejypuuorvvhqvbbsa`)
   - [ ] rodar `bash supabase/tests/run-local.sh` antes
