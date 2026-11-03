@@ -53,3 +53,24 @@ export function parseAdjustment(input: unknown): ParsedAdjustment {
   // Normaliza o zero negativo (-0), que o JSON preserva e o banco não distingue.
   return { ok: true, value: (value as number) + 0, reason: text };
 }
+
+export type AdjustedRating = RatingResult & {
+  /** Ajuste efetivamente aplicado, já dentro de -5..5. */
+  adjustment: number;
+};
+
+/**
+ * Soma o ajuste do treinador à nota geral, sempre dentro de 40–99.
+ * Os atributos ficam como calculados: o ajuste é um juízo sobre a nota
+ * geral, não sobre cada fundamento, e assim continua explicável no card.
+ */
+export function applyAdjustment(rating: RatingResult, adjustment: number): AdjustedRating {
+  const safe = Number.isFinite(adjustment)
+    ? Math.max(-MAX_ADJUSTMENT, Math.min(MAX_ADJUSTMENT, Math.round(adjustment)))
+    : 0;
+  return {
+    overall: clampRating(rating.overall + safe),
+    attributes: rating.attributes,
+    adjustment: safe + 0,
+  };
+}
