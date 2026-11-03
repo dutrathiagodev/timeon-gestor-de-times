@@ -8,7 +8,10 @@ import type {
   StatDefinition,
 } from "./types";
 
-type Row = [count: number, positionKey: string];
+/** Uma linha da formação, da esquerda para a direita, uma posição por atleta. */
+type Row = string[];
+
+const repeat = (count: number, positionKey: string): Row => Array<string>(count).fill(positionKey);
 
 function positionLabel(positions: Position[], key: string) {
   return positions.find((p) => p.key === key)?.label ?? key;
@@ -17,6 +20,7 @@ function positionLabel(positions: Position[], key: string) {
 /**
  * Monta a formação a partir das linhas, da defesa ao ataque.
  * Goleiro fixo no fundo; cada linha distribui os atletas igualmente na largura.
+ * Posição que se repete na formação (ex.: dois zagueiros) recebe número.
  */
 function formation(
   key: string,
@@ -26,17 +30,22 @@ function formation(
   const slots: Formation["slots"] = [
     { key: "gk", label: positionLabel(positions, "goalkeeper"), x: 50, y: 92, positionHint: "goalkeeper" },
   ];
-  rows.forEach(([count, positionKey], r) => {
+  const total: Record<string, number> = {};
+  rows.flat().forEach((positionKey) => (total[positionKey] = (total[positionKey] ?? 0) + 1));
+  const seen: Record<string, number> = {};
+  rows.forEach((row, r) => {
     const y = rows.length === 1 ? 50 : Math.round(72 - (r * 54) / (rows.length - 1));
-    for (let i = 0; i < count; i++) {
+    row.forEach((positionKey, i) => {
+      seen[positionKey] = (seen[positionKey] ?? 0) + 1;
+      const base = positionLabel(positions, positionKey);
       slots.push({
         key: `r${r + 1}_${i + 1}`,
-        label: count > 1 ? `${positionLabel(positions, positionKey)} ${i + 1}` : positionLabel(positions, positionKey),
-        x: Math.round(((i + 1) * 100) / (count + 1)),
+        label: total[positionKey] > 1 ? `${base} ${seen[positionKey]}` : base,
+        x: Math.round(((i + 1) * 100) / (row.length + 1)),
         y,
         positionHint: positionKey,
       });
-    }
+    });
   });
   return { key, label: key, slots };
 }
@@ -107,9 +116,9 @@ export const futsal = footballSport({
     { key: "pivo", label: "Pivô", short: "PIV" },
   ],
   formations: [
-    ["2-2", [[2, "fixo"], [2, "ala"]]],
-    ["3-1", [[1, "fixo"], [2, "ala"], [1, "pivo"]]],
-    ["4-0", [[4, "ala"]]],
+    ["1-2-1", [["fixo"], ["ala", "ala"], ["pivo"]]],
+    ["2-2", [repeat(2, "fixo"), repeat(2, "ala")]],
+    ["4-0", [repeat(4, "ala")]],
   ],
   stats: SHARED_STATS,
 });
@@ -129,12 +138,15 @@ export const footballSociety = footballSport({
   maxBench: 7,
   positions: OUTFIELD_POSITIONS,
   formations: [
-    ["2-3-1", [[2, "defender"], [3, "midfielder"], [1, "attacker"]]],
-    ["3-2-1", [[3, "defender"], [2, "midfielder"], [1, "attacker"]]],
-    ["2-2-2", [[2, "defender"], [2, "midfielder"], [2, "attacker"]]],
+    ["2-3-1", [repeat(2, "defender"), repeat(3, "midfielder"), ["attacker"]]],
+    ["3-2-1", [repeat(3, "defender"), repeat(2, "midfielder"), ["attacker"]]],
+    ["2-2-2", [repeat(2, "defender"), repeat(2, "midfielder"), repeat(2, "attacker")]],
   ],
   stats: [...SHARED_STATS, MINUTES],
 });
+
+/** Defesa de quatro: laterais nas pontas e dois zagueiros no meio. */
+const BACK_FOUR: Row = ["fullback", "defender", "defender", "fullback"];
 
 export const footballField = footballSport({
   key: "football_field",
@@ -151,10 +163,10 @@ export const footballField = footballSport({
     { key: "striker", label: "Centroavante", short: "CEN" },
   ],
   formations: [
-    ["4-4-2", [[4, "defender"], [4, "midfielder"], [2, "striker"]]],
-    ["4-3-3", [[4, "defender"], [3, "midfielder"], [3, "striker"]]],
-    ["3-5-2", [[3, "defender"], [5, "midfielder"], [2, "striker"]]],
-    ["4-2-3-1", [[4, "defender"], [2, "defensive_mid"], [3, "midfielder"], [1, "striker"]]],
+    ["4-3-3", [BACK_FOUR, repeat(3, "midfielder"), ["winger", "striker", "winger"]]],
+    ["4-4-2", [BACK_FOUR, repeat(4, "midfielder"), repeat(2, "striker")]],
+    ["3-5-2", [repeat(3, "defender"), repeat(5, "midfielder"), repeat(2, "striker")]],
+    ["4-2-3-1", [BACK_FOUR, repeat(2, "defensive_mid"), repeat(3, "midfielder"), ["striker"]]],
   ],
   stats: [...SHARED_STATS, MINUTES, ...FIELD_ONLY],
 });
