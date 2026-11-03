@@ -194,3 +194,18 @@ Aceitas em 2026-11-02 ("ficou bom"): gestor revela o CPF com auditoria; código 
 Ainda para confirmar:
 
 1. O padrão do código novo é **aceite ligado** (a pessoa espera a aprovação). Prefere o padrão desligado, entrando na hora?
+
+## 9. Respostas do dono (2026-11-03)
+
+1. **Escopo (D1).** O TimeOn mexe com **organização, e dentro dela os seus times**. Não há controle de liga (nem competição, tabela ou classificação). A liga só aparece como **tipo de jogo no calendário** ("jogo da liga"), para o time saber que joga.
+2. **Público (D2).** Família e torcida **não têm acesso por enquanto**; talvez no futuro.
+3. **Mensalidade (D3).** **Sem mensalidade por enquanto.** O módulo Financeiro sai do menu até haver decisão.
+4. **Menores (D4).** Entram, **com autorização dos pais e do técnico**. Falta desenhar onde a autorização é registrada (quem assina, validade, o que acontece sem ela) e revisar a política de privacidade para dado de menor.
+5. **Homologação (D5).** **Só o gestor** homologa o jogo (administração, como papel acima, também pode).
+6. **Modalidades (D6).** **Sempre separadas**: cada time tem a sua modalidade e nada mistura. Na visão da organização aparecem **todos os times**, agrupados por modalidade.
+
+### Ajuste sobre menores (2026-11-03, mesma conversa)
+
+- **Quem cadastra um menor:** só **técnico, gestor ou administração**. O menor **não cria o próprio registro** por link ou código.
+- **Jogador (maior de idade):** entra pelo **link de convite ou pelo código de convite** e cria o próprio registro.
+- Consequência técnica, **ainda não implementada**: a função do banco que deixa o jogador criar o próprio registro (`register_my_athlete`) precisa recusar menor de 18 anos, e o cadastro de menor passa só pelas funções da comissão (`register_athlete`, `add_athlete_to_team`), com a autorização dos pais e do técnico registrada. Mexer nisso é uma nova migration, que o dono aplica.

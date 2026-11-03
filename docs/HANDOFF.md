@@ -2,6 +2,8 @@
 
 Documento de passagem: qualquer pessoa ou agente que assumir o repositório deve ler isto primeiro, depois `CLAUDE.md`/`AGENTS.md` e `docs/architecture/`.
 
+**Para entender o desenho do sistema e como mantê-lo atualizado:** [DOCUMENTO-VIVO.md](DOCUMENTO-VIVO.md) (mapa dos documentos, situação de cada módulo, como atualizar e melhorar) e [architecture/system-design.md](architecture/system-design.md). As regras das modalidades estão em [domain/guia-modalidades-esportivas.md](domain/guia-modalidades-esportivas.md).
+
 ## O que é
 
 **TimeOn** (repo `dutrathiagodev/timeon-gestor-de-times`, antes "Falcons"): plataforma de gestão de times esportivos. Hoje atende um time (Falcons Vôlei, Atlética FAP); a meta é multi-time e multi-esporte (vôlei, futsal, fut7/society, campo, basquete, handebol) com conta do atleta, jogo ao vivo, OVR por esporte e escalação salva. Custo zero e segurança são prioridade.
@@ -15,7 +17,7 @@ Documento de passagem: qualquer pessoa ou agente que assumir o repositório deve
 
 | Área | Situação |
 |---|---|
-| Site em produção | marca TimeOn (logo, Sora, laranja/grafite), login com 2FA TOTP, painel com design antigo |
+| Site em produção | marca TimeOn (logo, Inter, laranja/grafite), login com 2FA TOTP. PR #52 (layout completo + Design System v1.1): moldura nova com troca de organização e time, menu por papel, `/acesso` e `/modalidades`; telas antigas só ganharam a paleta e **ainda precisam migrar** para os tokens e o tema claro. Organização, times e papel são **fixos** em `src/lib/teams.ts` até as telas lerem o banco |
 | Segurança | RLS só `authenticated`, anon sem privilégios, API com allowlist/CSRF/2FA, fotos privadas com URL assinada, `npm audit` 0 |
 | Banco: fundação, acesso e atletas (00017, 00024, 00025, 00038) | **Aplicado em produção em 2026-11-03** (projeto `plataforma-gestao-time`, ref `ncvejypuuorvvhqvbbsa`): 12 migrations coladas no SQL Editor como uma transação só, e `supabase/verify/after-apply.sql` deu **15 de 15 OK**. As tabelas novas estão vazias e nenhuma tela as usa ainda. Gestor, time único por esporte+categoria+faixa, criar time, código do time com aceite, atletas com perfil por time, CPF, telefone e data de nascimento cifrados no servidor, auditoria de leitura. Testes locais: 236 verificações de RLS, auditoria de permissões, verificador e o pacote (`bash supabase/tests/run-local.sh`) |
 | Layout novo | aguardando o usuário (card 00031) |
