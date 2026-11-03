@@ -15,8 +15,10 @@ for f in $(ls supabase/migrations/*_foundation_*.sql supabase/migrations/*_acces
   echo "migration: $(basename "$f")"
   psql_run < "$f"
 done
-if ! out=$(psql_run < supabase/tests/foundation_rls.sql 2>&1); then
-  echo "$out" | grep -E "FALHOU|ERROR" || echo "$out"
-  exit 1
-fi
-echo "$out" | grep -E "^NOTICE:  ok|TODOS"
+for test in foundation_rls access_rls; do
+  if ! out=$(psql_run < "supabase/tests/$test.sql" 2>&1); then
+    echo "$out" | grep -E "FALHOU|ERROR" || echo "$out"
+    exit 1
+  fi
+  echo "$out" | grep -E "^NOTICE:  ok|TODOS"
+done
