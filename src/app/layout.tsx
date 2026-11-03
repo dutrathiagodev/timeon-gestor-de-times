@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Barlow_Condensed, Inter } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import "./globals.css";
 import { ActiveContextProvider } from "@/components/layout/active-context";
@@ -15,6 +15,14 @@ const inter = Inter({
   display: "swap",
 });
 
+// Fonte condensada só das cartas dos atletas (desenho aprovado no Claude Design).
+const barlow = Barlow_Condensed({
+  variable: "--font-card",
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
   title: "TimeOn | Gestao de times",
   description:
@@ -27,7 +35,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="pt-BR" className={cn(inter.variable)}>
+    <html lang="pt-BR" className={cn(inter.variable, barlow.variable)}>
       <body>
         <ActiveContextProvider
           organizations={getOrganizationOptions()}

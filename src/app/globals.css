@@ -1777,201 +1777,65 @@ textarea.form-input {
   gap: 18px;
 }
 
-.overall-card {
-  position: relative;
-  overflow: hidden;
-  padding: 20px;
-  border-radius: 28px;
-  border: 1px solid rgba(240, 197, 92, 0.26);
-  background:
-    radial-gradient(circle at top center, rgba(255, 255, 255, 0.24), transparent 36%),
-    linear-gradient(180deg, rgba(250, 245, 224, 0.92), rgba(196, 168, 92, 0.78));
-  color: #34260d;
-  box-shadow: 0 28px 54px rgba(0, 0, 0, 0.26);
-}
 
-.overall-card.is-compact {
-  margin-top: 6px;
-}
 
-.overall-card-glow {
-  position: absolute;
-  inset: 12px;
-  border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  pointer-events: none;
-}
 
-.overall-card-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
-}
 
-.overall-rating-block {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 4px;
-}
 
-.overall-rating-value {
-  font-family: var(--font-heading), sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  font-size: 54px;
-  line-height: 0.9;
-}
 
-.overall-rating-label {
-  font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-}
 
-.overall-player-meta {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 4px;
-  text-align: right;
-}
 
-.overall-player-meta strong {
-  font-size: 18px;
-  line-height: 1.1;
-}
 
-.overall-player-meta small {
-  color: rgba(52, 38, 13, 0.72);
-  font-size: 12px;
-}
 
-.overall-portrait {
-  margin: 16px auto 18px;
-  width: 132px;
-  height: 132px;
-  border-radius: 24px;
-  overflow: hidden;
-  border: 2px solid rgba(255, 255, 255, 0.44);
-  background: rgba(255, 255, 255, 0.36);
-  display: grid;
-  place-items: center;
-}
 
-.overall-portrait img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
 
-.overall-placeholder {
-  font-family: var(--font-heading), sans-serif;
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  font-size: 42px;
-}
 
-.overall-stats-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px 14px;
-}
 
-.overall-stat-row {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  font-size: 13px;
-  font-weight: 700;
-}
 
-.overall-card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-  margin-top: 16px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(52, 38, 13, 0.16);
-}
 
-.overall-card-footer small {
-  color: rgba(52, 38, 13, 0.7);
-  text-align: right;
-}
 
-.overall-stat-row dt,
-.overall-stat-row dd {
-  margin: 0;
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Selo da posição: escuro sobre o papel do card (as classes event-type-* são para fundo escuro). */
-.overall-position-pill {
-  align-self: flex-end;
-  padding: 3px 10px;
-  border-radius: 999px;
-  background: #34260d;
-  color: #fffaeb;
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
+
 
 /* Faixas da nota. Degradês opacos e claros: o texto escuro (#34260d) fica acima de 6:1 em todos. */
-.overall-card.is-elite {
-  border-color: rgba(255, 106, 26, 0.5);
-  background:
-    radial-gradient(circle at top center, rgba(255, 255, 255, 0.32), transparent 36%),
-    linear-gradient(180deg, #ffe9aa, #f0b04a);
-}
 
-.overall-card.is-gold {
-  background:
-    radial-gradient(circle at top center, rgba(255, 255, 255, 0.24), transparent 36%),
-    linear-gradient(180deg, #faf5e0, #d9bd6e);
-}
 
-.overall-card.is-silver {
-  border-color: rgba(190, 196, 206, 0.5);
-  background:
-    radial-gradient(circle at top center, rgba(255, 255, 255, 0.3), transparent 36%),
-    linear-gradient(180deg, #f0f2f5, #b4bccb);
-}
 
-.overall-card.is-bronze {
-  border-color: rgba(176, 112, 64, 0.4);
-  background:
-    radial-gradient(circle at top center, rgba(255, 255, 255, 0.22), transparent 36%),
-    linear-gradient(180deg, #f0d6be, #d8a27a);
-}
+
+
+
+
 
 /*
  * A forma vai num selo claro: o verde e o vermelho do tema são para fundo escuro
  * e não passam de 3:1 sobre o dourado. No selo: 6,3:1 (sucesso), 7,5:1 (perigo).
  */
-.overall-card .tone-success,
-.overall-card .tone-danger,
-.overall-card .tone-neutral {
-  padding: 2px 10px;
-  border-radius: 999px;
-  background: #fffaeb;
-  font-size: 12px;
-  font-weight: 700;
-}
 
-.overall-card .tone-success {
-  color: #0d6b3c;
-}
 
-.overall-card .tone-danger {
-  color: #a3171d;
-}
 
-.overall-card .tone-neutral {
-  color: #5b4a28;
-}
+
+
+
+
 
 .leader-index {
   width: 32px;
@@ -3483,4 +3347,447 @@ body {
 
 .board-field.is-editing .board-slot:active {
   cursor: grabbing;
+}
+/* Galeria de cartas */
+.card-gallery-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-gallery-row h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.card-gallery-row h3 small {
+  margin-left: 8px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.card-gallery-variants {
+  display: grid;
+  grid-template-columns: repeat(4, max-content);
+  gap: 20px 24px;
+  overflow-x: auto;
+  padding-bottom: 8px;
+}
+
+.card-gallery-variant {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.card-gallery-variant > span {
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* =========================================================================
+   Carta do atleta (RatingCard), desenho aprovado no Claude Design ("Cartas TimeOn").
+   Base de 308 x 433 px reduzida por --card-scale. Fundo preto em todas as variantes;
+   a cor de destaque (--card-a etc.) muda entre especial, ouro, prata e bronze.
+   ========================================================================= */
+.fut-card-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+}
+
+.fut-card {
+  --card-scale: 0.7208;
+  --card-hi: #ffa25c;
+  --card-a: #ff5c0a;
+  --card-b: #e04400;
+  --card-c: #6e1f02;
+  --card-glow: rgba(255, 92, 10, 0.7);
+  --card-glow-soft: rgba(255, 92, 10, 0.35);
+  --card-shape: path("M0 42Q0 38 3 35L29 4Q32 0 37 0L271 0Q276 0 279 4L305 35Q308 38 308 42L308 376Q308 382 302 385Q228 410 160 430Q154 432 148 430Q80 410 6 385Q0 382 0 376Z");
+  position: relative;
+  width: calc(308px * var(--card-scale));
+  height: calc(433px * var(--card-scale));
+  color: #ffffff;
+  font-family: var(--font-card), "Arial Narrow", sans-serif;
+  filter: drop-shadow(0 0 6px var(--card-glow)) drop-shadow(0 10px 14px rgba(0, 0, 0, 0.55));
+}
+
+.fut-card.is-compact {
+  --card-scale: 0.55;
+}
+
+.fut-card.is-gold {
+  --card-hi: #fff1b0;
+  --card-a: #f2c43c;
+  --card-b: #c4900f;
+  --card-c: #5e4304;
+  --card-glow: rgba(242, 196, 60, 0.55);
+  --card-glow-soft: rgba(242, 196, 60, 0.3);
+}
+
+.fut-card.is-silver {
+  --card-hi: #ffffff;
+  --card-a: #cfd5de;
+  --card-b: #8e97a5;
+  --card-c: #3d434c;
+  --card-glow: rgba(207, 213, 222, 0.5);
+  --card-glow-soft: rgba(207, 213, 222, 0.3);
+}
+
+.fut-card.is-bronze {
+  --card-hi: #f7c79c;
+  --card-a: #d58648;
+  --card-b: #a5612b;
+  --card-c: #4d2a10;
+  --card-glow: rgba(213, 134, 72, 0.55);
+  --card-glow-soft: rgba(213, 134, 72, 0.3);
+}
+
+.fut-card-inner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 308px;
+  height: 433px;
+  transform: scale(var(--card-scale));
+  transform-origin: 0 0;
+}
+
+.fut-card-rim,
+.fut-card-face {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 308px;
+  height: 433px;
+  clip-path: var(--card-shape);
+}
+
+.fut-card-rim {
+  background: linear-gradient(105deg, #9a948e 0%, #4b3c34 20%, var(--card-b) 46%, var(--card-a) 68%, var(--card-hi) 100%);
+}
+
+.fut-card-face {
+  overflow: hidden;
+  transform: translate(2.5px, 3px) scale(0.9838, 0.986);
+  transform-origin: 0 0;
+  background: linear-gradient(170deg, #27211e 0%, #151416 46%, #0d0d0f 100%);
+}
+
+.fut-card-face > .fut-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.fut-layer.is-sheen {
+  clip-path: polygon(0 0, 150px 0, 0 170px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0) 72%);
+}
+
+.fut-layer.is-shard {
+  clip-path: polygon(138px 0, 308px 0, 308px 216px, 214px 216px, 176px 104px);
+  background: linear-gradient(215deg, var(--card-hi) 0%, var(--card-a) 22%, var(--card-a) 48%, var(--card-b) 74%, var(--card-c) 100%);
+}
+
+.fut-layer.is-facet {
+  clip-path: polygon(176px 104px, 296px 0, 308px 0, 308px 14px, 190px 142px);
+  background: rgba(255, 214, 170, 0.22);
+}
+
+.fut-layer.is-dark-1 { clip-path: polygon(138px 0, 196px 0, 166px 64px); background: rgba(0, 0, 0, 0.35); }
+.fut-layer.is-dark-2 { clip-path: polygon(240px 0, 308px 0, 308px 62px); background: rgba(0, 0, 0, 0.22); }
+.fut-layer.is-stripe-1 { clip-path: polygon(198px 216px, 308px 64px, 308px 76px, 210px 216px); background: rgba(0, 0, 0, 0.55); }
+.fut-layer.is-stripe-2 { clip-path: polygon(228px 216px, 308px 106px, 308px 113px, 235px 216px); background: rgba(0, 0, 0, 0.5); }
+.fut-layer.is-stripe-3 { clip-path: polygon(252px 216px, 308px 140px, 308px 150px, 262px 216px); background: rgba(0, 0, 0, 0.55); }
+.fut-layer.is-stripe-4 { clip-path: polygon(276px 216px, 308px 172px, 308px 176px, 280px 216px); background: rgba(0, 0, 0, 0.45); }
+.fut-layer.is-stripe-5 { clip-path: polygon(186px 150px, 308px 30px, 308px 34px, 189px 155px); background: rgba(0, 0, 0, 0.4); }
+.fut-layer.is-stripe-6 { clip-path: polygon(14px 392px, 92px 346px, 96px 349px, 20px 396px); background: rgba(0, 0, 0, 0.55); }
+.fut-layer.is-stripe-7 { clip-path: polygon(294px 392px, 216px 346px, 212px 349px, 288px 396px); background: rgba(0, 0, 0, 0.55); }
+
+.fut-layer.is-wedge {
+  clip-path: polygon(0 180px, 0 216px, 30px 216px);
+  background: linear-gradient(90deg, var(--card-a), rgba(0, 0, 0, 0));
+}
+
+.fut-layer.is-line {
+  clip-path: polygon(0 204px, 120px 194px, 120px 195.5px, 0 206.5px);
+  background: linear-gradient(90deg, var(--card-a), rgba(0, 0, 0, 0));
+}
+
+.fut-layer.is-bottom-glow {
+  background:
+    radial-gradient(ellipse 150px 140px at 0 392px, var(--card-glow) 0%, rgba(0, 0, 0, 0) 70%),
+    radial-gradient(ellipse 150px 140px at 308px 392px, var(--card-glow) 0%, rgba(0, 0, 0, 0) 70%),
+    radial-gradient(ellipse 80px 40px at 154px 433px, var(--card-glow) 0%, rgba(0, 0, 0, 0) 80%);
+}
+
+.fut-card-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 308px;
+  height: 433px;
+  overflow: visible;
+}
+
+.fut-card-edge-glow {
+  fill: none;
+  stroke: var(--card-a);
+}
+
+.fut-card-silhouette {
+  fill: #060607;
+  stroke: var(--card-glow-soft);
+  stroke-width: 1.6;
+}
+
+.fut-spark {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #ffffff 0%, var(--card-a) 35%, rgba(0, 0, 0, 0) 70%);
+  animation: fut-twinkle 2.9s ease-in-out infinite;
+}
+
+.fut-shine {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.fut-shine::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 34%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0));
+  animation: fut-shine 4.2s ease-in-out infinite;
+}
+
+@keyframes fut-shine {
+  0% { transform: translateX(-140%) skewX(-18deg); }
+  55%, 100% { transform: translateX(260%) skewX(-18deg); }
+}
+
+@keyframes fut-twinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.7); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fut-spark,
+  .fut-shine::before {
+    animation: none;
+  }
+}
+
+.fut-band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 209px;
+  height: 57px;
+  background: rgba(6, 6, 8, 0.48);
+}
+
+.fut-band::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1.5px;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0), var(--card-a) 18%, rgba(255, 255, 255, 0.45) 50%, var(--card-a) 82%, rgba(0, 0, 0, 0));
+}
+
+.fut-lower {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 266px;
+  bottom: 0;
+  background: rgba(6, 6, 8, 0.26);
+}
+
+.fut-divider {
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  top: 264px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.fut-divider.is-vertical {
+  left: 154px;
+  right: auto;
+  top: 280px;
+  width: 1px;
+  height: 82px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.fut-card-rating {
+  position: absolute;
+  left: 33px;
+  top: 24px;
+  font-size: 76px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: -0.5px;
+  background: linear-gradient(180deg, #ffffff 30%, #cfcfd2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.fut-card-position {
+  position: absolute;
+  left: 36px;
+  top: 98px;
+  font-size: 32px;
+  font-weight: 500;
+  line-height: 1;
+  letter-spacing: 0.5px;
+  color: #f0f0f0;
+}
+
+.fut-ball {
+  position: absolute;
+  left: 39px;
+  top: 141px;
+  width: 52px;
+  height: 52px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: #f3f3f1;
+  box-shadow: 0 4px 9px rgba(0, 0, 0, 0.55);
+}
+
+.fut-ball.is-basket {
+  background: radial-gradient(circle at 35% 30%, #e88a4a 0%, #c45f22 55%, #8a3c12 100%);
+}
+
+.fut-ball.is-volley {
+  background: #f2cf2e;
+}
+
+.fut-ball svg {
+  position: absolute;
+  inset: 0;
+}
+
+.fut-ball::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.55) 0%, rgba(255, 255, 255, 0) 34%),
+    radial-gradient(circle at 70% 78%, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+.fut-card-name {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  top: 225px;
+  overflow: hidden;
+  font-size: 25px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.6px;
+  text-align: center;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.fut-card-stats {
+  position: absolute;
+  inset: 276px 0 auto 0;
+  display: grid;
+  grid-template-columns: 154px 154px;
+  grid-template-rows: repeat(3, 31px);
+  grid-auto-flow: column;
+  margin: 0;
+}
+
+.fut-stat {
+  display: flex;
+  align-items: baseline;
+}
+
+.fut-stat dd {
+  width: 78px;
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.fut-stat:nth-child(n + 4) dd {
+  width: 60px;
+}
+
+.fut-stat dt {
+  margin-left: 14px;
+  color: #d4d4d8;
+  font-size: 26px;
+  font-weight: 400;
+}
+
+.fut-card-brand {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 377px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+}
+
+.fut-card-brand .brand-logo {
+  width: 82px;
+  color: #f5f3ee;
+}
+
+.fut-card-caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  font-size: 12px;
+}
+
+.fut-card-caption small {
+  color: var(--color-text-muted);
+}
+
+.fut-card-caption .tone-success { color: var(--color-success); }
+.fut-card-caption .tone-danger { color: var(--color-danger); }
+.fut-card-caption .tone-neutral { color: var(--color-text-secondary); }
+
+.fut-card-photo {
+  position: absolute;
+  left: 64px;
+  top: 0;
+  width: 244px;
+  height: 240px;
+  object-fit: cover;
+  object-position: top center;
+  -webkit-mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 70%, transparent 100%);
 }
