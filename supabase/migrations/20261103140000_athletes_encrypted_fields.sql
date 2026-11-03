@@ -7,6 +7,22 @@
 -- comissao precisa deles para montar o elenco e os avisos de categoria; o RLS os protege.
 -- Nada disto foi aplicado em producao: ainda nao ha dados a migrar.
 
+-- Trava de seguranca: o SQL nao consegue cifrar (a chave vive so no servidor). Se alguem
+-- ja cadastrou atletas ou telefones com a versao anterior, esta migration APAGARIA a data de
+-- nascimento e o telefone em claro. Nesse caso ela para, e os dados precisam ser migrados
+-- antes por um script no servidor (le o valor, cifra e grava o texto cifrado).
+do $$
+begin
+  if exists (select 1 from public.athletes) then
+    raise exception 'athletes already has rows: migrate birth_date to ciphertext on the server before applying this migration'
+      using errcode = 'feature_not_supported';
+  end if;
+  if exists (select 1 from public.athlete_private where phone is not null) then
+    raise exception 'athlete_private already has plaintext phones: encrypt them on the server before applying this migration'
+      using errcode = 'feature_not_supported';
+  end if;
+end $$;
+
 -- Ano de nascimento em claro; a data completa vai para athlete_private.
 alter table public.athletes add column birth_year smallint;
 update public.athletes set birth_year = extract(year from birth_date)::smallint;
