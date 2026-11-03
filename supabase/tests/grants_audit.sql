@@ -24,6 +24,7 @@ insert into t.expected values
   ('team_join_requests', 'SELECT'),
   ('team_members', 'SELECT'), ('team_members', 'DELETE'),
   ('athletes', 'SELECT'),
+  ('games', 'SELECT'), ('games', 'INSERT'), ('games', 'UPDATE'), ('games', 'DELETE'),
   ('audit_events', 'SELECT');
 
 select t.expect('toda tabela de public esta na lista esperada (tabela nova exige decidir as permissoes)',

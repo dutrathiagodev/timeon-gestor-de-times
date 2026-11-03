@@ -19,7 +19,7 @@ export default function CardsClient() {
       <TopBar
         title="Cartas dos atletas"
         badge="Modelo"
-        description="Especial a partir de 90, ouro de 80 a 89, prata de 70 a 79 e bronze abaixo de 70. Cada posição mostra só as estatísticas que valem para ela. Atletas e notas são de exemplo."
+        description="Especial a partir de 90, ouro de 80 a 89, prata de 70 a 79 e bronze abaixo de 70. Cada posição mostra as seis estatísticas que valem para ela. Atletas e notas são de exemplo."
       />
 
       <div className="formation-picker" role="tablist" aria-label="Modalidade">

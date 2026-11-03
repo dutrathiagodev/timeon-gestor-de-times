@@ -1,5 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
-import GamesClient from "@/components/sections/games/games";
+import GamesBySport from "@/components/sections/sport/games-by-sport";
 
 export default async function GamesPage() {
   const supabase = await createClient();
@@ -8,5 +8,5 @@ export default async function GamesPage() {
     .select("*")
     .order("data", { ascending: false });
 
-  return <GamesClient initialEvents={games || []} />;
+  return <GamesBySport initialEvents={games || []} />;
 }
