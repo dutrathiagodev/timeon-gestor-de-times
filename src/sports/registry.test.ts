@@ -67,6 +67,29 @@ describe("registro de esportes", () => {
       }
     });
 
+    it("nenhum par de slots se sobrepõe num campo de celular (335 px de largura)", () => {
+      // Proporções do CSS em globals.css: vôlei 5:4, demais 4:5. Botão = 14% da largura, entre 46 e 68 px.
+      const width = 335;
+      const height = sport.family === "volleyball" ? (width * 4) / 5 : (width * 5) / 4;
+      const token = Math.min(68, Math.max(46, width * 0.14));
+      for (const formation of sport.formations) {
+        const points = formation.slots.map((slot) => ({
+          key: slot.key,
+          x: (slot.x / 100) * width,
+          y: (slot.y / 100) * height,
+        }));
+        for (let i = 0; i < points.length; i++) {
+          for (let j = i + 1; j < points.length; j++) {
+            const distance = Math.hypot(points[i].x - points[j].x, points[i].y - points[j].y);
+            expect(
+              distance,
+              `${formation.key}: ${points[i].key} e ${points[j].key}`,
+            ).toBeGreaterThanOrEqual(token);
+          }
+        }
+      }
+    });
+
     it("cada formação escala exatamente os atletas em jogo (líbero à parte)", () => {
       for (const formation of sport.formations) {
         const onField = formation.slots.filter((s) => s.positionHint !== "libero");
