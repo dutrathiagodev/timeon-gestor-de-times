@@ -1560,29 +1560,48 @@ textarea.form-input {
   margin: 0;
 }
 
-/* Faixas da nota. Ouro é o visual base; as outras só trocam o fundo. */
+/* Faixas da nota. Degradês opacos e claros: o texto escuro (#34260d) fica acima de 6:1 em todos. */
 .overall-card.is-elite {
   border-color: rgba(255, 106, 26, 0.5);
   background:
     radial-gradient(circle at top center, rgba(255, 255, 255, 0.32), transparent 36%),
-    linear-gradient(180deg, rgba(255, 233, 170, 0.96), rgba(232, 165, 52, 0.9));
+    linear-gradient(180deg, #ffe9aa, #f0b04a);
+}
+
+.overall-card.is-gold {
+  background:
+    radial-gradient(circle at top center, rgba(255, 255, 255, 0.24), transparent 36%),
+    linear-gradient(180deg, #faf5e0, #d9bd6e);
 }
 
 .overall-card.is-silver {
   border-color: rgba(190, 196, 206, 0.5);
   background:
     radial-gradient(circle at top center, rgba(255, 255, 255, 0.3), transparent 36%),
-    linear-gradient(180deg, rgba(240, 242, 245, 0.95), rgba(168, 176, 190, 0.85));
+    linear-gradient(180deg, #f0f2f5, #b4bccb);
 }
 
 .overall-card.is-bronze {
   border-color: rgba(176, 112, 64, 0.4);
   background:
     radial-gradient(circle at top center, rgba(255, 255, 255, 0.22), transparent 36%),
-    linear-gradient(180deg, rgba(240, 214, 190, 0.94), rgba(176, 118, 76, 0.8));
+    linear-gradient(180deg, #f0d6be, #d8a27a);
 }
 
-/* O verde e o vermelho do tema são para fundo escuro; no papel do card precisam de tom mais fechado. */
+/*
+ * A forma vai num selo claro: o verde e o vermelho do tema são para fundo escuro
+ * e não passam de 3:1 sobre o dourado. No selo: 6,3:1 (sucesso), 7,5:1 (perigo).
+ */
+.overall-card .tone-success,
+.overall-card .tone-danger,
+.overall-card .tone-neutral {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: #fffaeb;
+  font-size: 12px;
+  font-weight: 700;
+}
+
 .overall-card .tone-success {
   color: #0d6b3c;
 }
@@ -1592,7 +1611,7 @@ textarea.form-input {
 }
 
 .overall-card .tone-neutral {
-  color: rgba(52, 38, 13, 0.72);
+  color: #5b4a28;
 }
 
 .leader-index {
