@@ -1,3 +1,4 @@
+import { VOLLEYBALL_ATTRIBUTES, volleyballRating } from "./rating/volleyball";
 import { setsScore } from "./score";
 import type {
   Formation,
@@ -122,5 +123,7 @@ export const volleyball: SportDefinition = {
   ],
   score: setsScore(5),
   stats: STATS,
+  ratingAttributes: VOLLEYBALL_ATTRIBUTES,
+  rating: volleyballRating,
   dashboardCards: ["next_event", "win_rate", "team_overall", "set_balance"],
 };

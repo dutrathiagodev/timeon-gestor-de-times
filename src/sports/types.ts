@@ -60,6 +60,23 @@ export type ScoreRules = {
   final(periods: Period[]): { us: number; them: number };
 };
 
+export type RatingAttribute = { key: string; label: string; short: string };
+
+export type RatingInput = {
+  /** Soma das estatísticas do atleta (chaves de `SportDefinition.stats`). */
+  totals: Record<string, number>;
+  /** Jogos em que a soma foi feita; 0 devolve a nota base da posição. */
+  games: number;
+  position?: string | null;
+};
+
+export type RatingResult = {
+  /** Nota de 40 a 99. */
+  overall: number;
+  /** Cada atributo na mesma escala, só os que valem para a posição. */
+  attributes: Record<string, number>;
+};
+
 export interface SportDefinition {
   key: SportKey;
   family: SportFamily;
@@ -71,5 +88,8 @@ export interface SportDefinition {
   formations: Formation[];
   score: ScoreRules;
   stats: StatDefinition[];
+  /** Todos os atributos que o card de OVR do esporte pode mostrar. */
+  ratingAttributes: RatingAttribute[];
+  rating(input: RatingInput): RatingResult;
   dashboardCards: DashboardCardKey[];
 }

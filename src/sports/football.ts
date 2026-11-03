@@ -1,3 +1,4 @@
+import { FOOTBALL_ATTRIBUTES, footballRating } from "./rating/football";
 import { periodsScore } from "./score";
 import type {
   Formation,
@@ -88,6 +89,8 @@ function footballSport(config: FootballConfig): SportDefinition {
     formations: config.formations.map(([key, rows]) => formation(key, config.positions, rows)),
     score: periodsScore({ periods: 2, maxExtraPeriods: 2, allowDraw: true }),
     stats: config.stats,
+    ratingAttributes: FOOTBALL_ATTRIBUTES,
+    rating: footballRating,
     dashboardCards: ["next_event", "win_rate", "team_overall", "goal_balance"],
   };
 }
