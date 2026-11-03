@@ -2245,3 +2245,74 @@ textarea.form-input {
   border-color: var(--brand);
   color: #fff;
 }
+
+.team-switcher {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+
+.team-switcher-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 12px;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.team-switcher-text {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.team-switcher-text small {
+  color: var(--text-muted);
+  font-size: 0.72rem;
+}
+
+.team-switcher-text strong {
+  color: var(--text);
+}
+
+.team-switcher-text select {
+  min-height: 36px;
+  max-width: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: 10px;
+  background: var(--surface-strong);
+  color: var(--text);
+  font: inherit;
+  font-weight: 600;
+}
+
+.sport-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.modality-preview {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: start;
+}
+
+.modality-cards {
+  display: grid;
+  gap: 16px;
+}
+
+@media (max-width: 960px) {
+  .modality-preview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

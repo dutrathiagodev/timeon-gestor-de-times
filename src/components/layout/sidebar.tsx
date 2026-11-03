@@ -4,16 +4,18 @@ import Link from "next/link";
 import { BrandLogo } from "@/components/ui/brand-logo";
 import { usePathname, useRouter } from "next/navigation";
 import { useSidebar } from "./sidebar-context";
+import { TeamSwitcher, useActiveTeam } from "./active-team";
+import { SportIcon } from "./sport-icon";
 import {
   BarChart3,
   CalendarRange,
   ChevronLeft,
   LayoutDashboard,
+  LayoutGrid,
   LogOut,
   ShieldCheck,
   Menu,
   Users,
-  Volleyball,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { apiRequest } from "@/lib/api-client";
@@ -34,8 +36,8 @@ const navItems = [
   {
     href: "/lineup",
     label: "Escalacao",
-    icon: Volleyball,
-    hint: "Rotacoes e titulares",
+    icon: null,
+    hint: "Esquema e titulares",
   },
   {
     href: "/statistics",
@@ -49,12 +51,19 @@ const navItems = [
     icon: CalendarRange,
     hint: "Agenda e resultados",
   },
+  {
+    href: "/modalidades",
+    label: "Modalidades",
+    icon: LayoutGrid,
+    hint: "Modelo por esporte",
+  },
 ];
 
 export default function Sidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const { isOpen, toggleSidebar } = useSidebar();
+  const { team } = useActiveTeam();
 
   async function handleLogout() {
     await apiRequest("/api/auth/logout", "POST").catch(() => {});
@@ -86,11 +95,12 @@ export default function Sidebar() {
             <span className="sidebar-brand-tagline">Gestao de times</span>
           </div>
 
+          <TeamSwitcher />
+
           <div className="sidebar-section-label">Navegacao</div>
 
           <nav className="sidebar-nav">
             {navItems.map((item) => {
-              const Icon = item.icon;
               const isActive = pathname === item.href;
 
               return (
@@ -105,7 +115,11 @@ export default function Sidebar() {
                   }}
                 >
                   <span className="sidebar-link-icon">
-                    <Icon size={18} />
+                    {item.icon ? (
+                      <item.icon size={18} />
+                    ) : (
+                      <SportIcon sportKey={team?.sportKey ?? "volleyball"} />
+                    )}
                   </span>
                   <span className="sidebar-link-text">
                     <strong>{item.label}</strong>
