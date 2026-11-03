@@ -64,10 +64,25 @@ O sistema guarda dados pessoais de atletas (CPF, telefone, data de nascimento, p
 - producao e desenvolvimento usam projetos Supabase diferentes.
 - ativar backup/PITR no Supabase e conferir periodicamente.
 
+## Papeis, convites e acesso (task 00024)
+
+Decisoes em `docs/backlog/2026-11-02-decisoes-acesso-e-jogos.md`.
+
+- Papeis: admin (`org_memberships`), gestor (`team_staff.manager`), tecnico (`team_staff.coach`) e jogador (`team_players`). Permissao por funcao em `private`: `can_manage_team` (admin, gestor), `can_write_team` e `can_invite_players` (admin, gestor, tecnico), `can_read_team` (tambem jogador). Jogador nao le a comissao nem o elenco dos outros.
+- Criar time: so por `public.create_team` (admin, gestor, tecnico). Quem nao e admin entra no time novo com o papel que ja tem; nunca com papel maior.
+- Codigo do time: 12 caracteres de alfabeto de 32 (cerca de 60 bits), gerado no banco. **So o hash e guardado** e a coluna `code_hash` nao e legivel pelo cliente (grant por coluna): nunca use `select *` em `team_invites`. O texto aparece uma vez, na resposta de `create_team_invite`.
+- Papel fixado no codigo. Gestor e tecnico geram so codigo de jogador do proprio time; codigo de gestor e de tecnico so o admin gera e vale 1 uso.
+- `redeem_team_invite` responde igual para codigo errado, vencido, revogado ou esgotado (`invalid`), para nao ensinar nada a quem chuta. **5 erros em 15 minutos travam a pessoa** (`too_many_attempts`). Isso protege usuarios autenticados; a tela de cadastro por codigo (task futura) precisa de limite por IP no servidor, e a conta nova passa por senha e 2FA.
+- Aceite: com `requires_approval` (padrao) a pessoa fica pendente; gestor, tecnico ou admin decide. Pedido de gestor ou tecnico so o admin decide. Ninguem decide o proprio pedido.
+- Link de convite: o codigo vai depois do `#` (`/entrar#codigo=...`), que o navegador nao envia ao servidor.
+- `audit_events` e so de insercao (gatilho barra update e delete) e nunca recebe o codigo. Leitura so para admin.
+- Todas as escritas desse fluxo passam por funcoes `SECURITY DEFINER` com `search_path` vazio; as tabelas nao tem INSERT, UPDATE nem DELETE para o cliente (exceto remover jogador, por gestor ou admin).
+
 ## Checklist de PR
 
 - [ ] Tabela nova tem RLS e policy `TO authenticated`
 - [ ] Policy nova usa `private.can_*` / `has_org_role` e tem teste em `supabase/tests/`
+- [ ] Tabela com segredo (hash, chave) nao concede SELECT na coluna secreta ao cliente
 - [ ] Recurso novo esta em `resources` com colunas minimas
 - [ ] Rota nova chama `authorize()` e usa `pickFields`
 - [ ] Nenhum `createBrowserClient` ou chave secreta no cliente
