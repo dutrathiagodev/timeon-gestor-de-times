@@ -2814,3 +2814,100 @@ textarea.form-input {
     scroll-behavior: auto;
   }
 }
+
+.sidebar-link.is-soon {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.sidebar-link.is-soon .soon-badge {
+  margin-left: auto;
+  flex: none;
+}
+
+.home-modules {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.module-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.module-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  height: 100%;
+  padding: 18px;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: var(--surface);
+  transition:
+    border-color 0.18s ease,
+    transform 0.18s ease;
+}
+
+a.module-card:hover {
+  border-color: rgba(255, 106, 26, 0.4);
+  transform: translateY(-2px);
+}
+
+.module-card strong {
+  font-size: 16px;
+}
+
+.module-card > span:not(.module-icon):not(.soon-badge) {
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.module-card small {
+  margin-top: auto;
+  color: var(--brand);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.module-card.is-soon {
+  opacity: 0.6;
+  border-style: dashed;
+}
+
+.module-card .soon-badge {
+  margin-top: auto;
+}
+
+.module-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.soon-badge {
+  white-space: nowrap;
+}
+
+.sidebar-link-text {
+  flex: 1;
+}
+
+.sidebar-link.is-soon .sidebar-link-text small {
+  display: none;
+}
+
+.sidebar-link.is-soon {
+  min-height: 56px;
+}

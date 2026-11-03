@@ -2,66 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  BarChart3,
-  CalendarRange,
-  Home,
-  KeyRound,
-  LayoutDashboard,
-  LayoutGrid,
-  LogOut,
-  Repeat,
-  ShieldCheck,
-  Users,
-  type LucideIcon,
-} from "lucide-react";
+import { LogOut, Repeat } from "lucide-react";
 import { cn } from "@/lib/utils";
-import type { OrgRole } from "@/lib/teams";
 import AccessSwitcher from "./access-switcher";
 import { useActiveContext } from "./active-context";
+import { MODULE_GROUPS, modulesFor, type AppModule } from "./modules";
 import { ROLE_LABEL } from "./role-label";
-import { useLogout } from "./use-logout";
+import { SoonBadge } from "./soon-badge";
 import { SportIcon } from "./sport-icon";
 import { useSidebar } from "./sidebar-context";
-
-type NavItem = {
-  href: string;
-  label: string;
-  hint: string;
-  /** Sem ícone fixo: usa o da modalidade do time ativo. */
-  icon: LucideIcon | null;
-  /** Papéis que enxergam o item; sem a lista, todos enxergam. */
-  roles?: OrgRole[];
-};
-
-type NavGroup = { label: string; items: NavItem[] };
-
-const navGroups: NavGroup[] = [
-  {
-    label: "Principal",
-    items: [
-      { href: "/", label: "Início", hint: "Organização e times", icon: Home },
-      { href: "/dashboard", label: "Painel", hint: "Visão geral do time", icon: LayoutDashboard },
-    ],
-  },
-  {
-    label: "Gerenciar",
-    items: [
-      { href: "/players", label: "Atletas", hint: "Elenco e cadastro", icon: Users },
-      { href: "/lineup", label: "Escalação", hint: "Esquema e titulares", icon: null },
-      { href: "/games", label: "Jogos", hint: "Agenda e resultados", icon: CalendarRange },
-      { href: "/statistics", label: "Estatísticas", hint: "Desempenho e leitura", icon: BarChart3 },
-      { href: "/modalidades", label: "Modalidades", hint: "Modelo por esporte", icon: LayoutGrid, roles: ["admin", "manager"] },
-    ],
-  },
-  {
-    label: "Sistema",
-    items: [
-      { href: "/acesso", label: "Gestão de acesso", hint: "Pessoas, códigos e papéis", icon: KeyRound, roles: ["admin", "manager"] },
-      { href: "/conta/seguranca", label: "Segurança", hint: "Verificação em duas etapas", icon: ShieldCheck },
-    ],
-  },
-];
+import { useLogout } from "./use-logout";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -84,38 +34,24 @@ export default function Sidebar() {
       <aside className={cn("app-sidebar", isOpen ? "is-open" : "is-collapsed")}>
         <nav className="sidebar-shell" aria-label="Principal">
           <div className="sidebar-scroll">
-            {navGroups
-              .map((group) => ({
-                ...group,
-                items: group.items.filter((item) => !item.roles || item.roles.includes(role)),
-              }))
-              .filter((group) => group.items.length > 0)
-              .map((group) => (
-              <div key={group.label} className="sidebar-group">
-                <div className="sidebar-section-label">{group.label}</div>
-                {group.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className={cn("sidebar-link", pathname === item.href && "is-active")}
-                      aria-current={pathname === item.href ? "page" : undefined}
-                      onClick={closeOnMobile}
-                    >
-                      <span className="sidebar-link-icon">
-                        {item.icon ? (
-                          <item.icon size={18} />
-                        ) : (
-                          <SportIcon sportKey={team?.sportKey ?? "volleyball"} />
-                        )}
-                      </span>
-                      <span className="sidebar-link-text">
-                        <strong>{item.label}</strong>
-                        <small>{item.hint}</small>
-                      </span>
-                    </Link>
+            {MODULE_GROUPS.map((group) => {
+              const items = modulesFor(role, group);
+              if (items.length === 0) return null;
+              return (
+                <div key={group} className="sidebar-group">
+                  <div className="sidebar-section-label">{group}</div>
+                  {items.map((item) => (
+                    <NavEntry
+                      key={item.label}
+                      item={item}
+                      active={pathname === item.href}
+                      sportKey={team?.sportKey ?? "volleyball"}
+                      onNavigate={closeOnMobile}
+                    />
                   ))}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
 
           <div className="sidebar-account">
@@ -139,5 +75,49 @@ export default function Sidebar() {
         </nav>
       </aside>
     </>
+  );
+}
+
+function NavEntry({
+  item,
+  active,
+  sportKey,
+  onNavigate,
+}: {
+  item: AppModule;
+  active: boolean;
+  sportKey: Parameters<typeof SportIcon>[0]["sportKey"];
+  onNavigate: () => void;
+}) {
+  const content = (
+    <>
+      <span className="sidebar-link-icon">
+        {item.icon ? <item.icon size={18} /> : <SportIcon sportKey={sportKey} />}
+      </span>
+      <span className="sidebar-link-text">
+        <strong>{item.label}</strong>
+        <small>{item.hint}</small>
+      </span>
+      {item.href === null && <SoonBadge />}
+    </>
+  );
+
+  if (item.href === null) {
+    return (
+      <div className="sidebar-link is-soon" aria-disabled="true">
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={item.href}
+      className={cn("sidebar-link", active && "is-active")}
+      aria-current={active ? "page" : undefined}
+      onClick={onNavigate}
+    >
+      {content}
+    </Link>
   );
 }

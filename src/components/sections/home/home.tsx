@@ -4,6 +4,7 @@ import Link from "next/link";
 import { KeyRound, Plus } from "lucide-react";
 import TopBar from "@/components/layout/top-bar";
 import { OrganizationSwitcher, useActiveContext } from "@/components/layout/active-context";
+import { modulesFor } from "@/components/layout/modules";
 import { SoonBadge } from "@/components/layout/soon-badge";
 import { ROLE_LABEL } from "@/components/layout/role-label";
 import { SportIcon } from "@/components/layout/sport-icon";
@@ -14,6 +15,7 @@ export default function HomeClient() {
   const { organization, teams, team, role, setTeamId } = useActiveContext();
   const groups = groupTeamsBySport(teams);
   const isStaff = canManageAccess(role);
+  const modules = modulesFor(role, "Gerenciar");
 
   return (
     <div className="page-shell">
@@ -104,6 +106,41 @@ export default function HomeClient() {
           );
         })
       )}
+
+      <section className="home-modules" aria-label="Módulos do time">
+        <h2 className="home-group-title">O que você pode fazer</h2>
+        <ul className="module-grid">
+          {modules.map((item) => {
+            const body = (
+              <>
+                <span className="module-icon">
+                  {item.icon ? (
+                    <item.icon size={20} aria-hidden="true" />
+                  ) : (
+                    <SportIcon sportKey={team?.sportKey ?? "volleyball"} size={20} />
+                  )}
+                </span>
+                <strong>{item.label}</strong>
+                <span>{item.description}</span>
+                {item.href === null ? <SoonBadge /> : <small>Abrir →</small>}
+              </>
+            );
+            return (
+              <li key={item.label}>
+                {item.href === null ? (
+                  <div className="module-card is-soon" aria-disabled="true">
+                    {body}
+                  </div>
+                ) : (
+                  <Link href={item.href} className="module-card">
+                    {body}
+                  </Link>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </section>
     </div>
   );
 }
