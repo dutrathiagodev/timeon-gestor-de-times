@@ -1,28 +1,29 @@
 "use client";
 
 import Link from "next/link";
-import { ChevronLeft, ChevronsUpDown, Menu } from "lucide-react";
+import { ChevronsUpDown, PanelLeft } from "lucide-react";
 import { BrandLogo } from "@/components/ui/brand-logo";
+import { cn } from "@/lib/utils";
 import AccessSwitcher from "./access-switcher";
 import { useActiveContext } from "./active-context";
 import { ROLE_LABEL } from "./role-label";
 import { useSidebar } from "./sidebar-context";
 
-/** Barra do topo: marca e o acesso atual (organização e time), que abre a troca. */
+/** Faixa do topo: recolher o menu, acesso atual (organização e time) e papel. */
 export default function AppHeader() {
   const { isOpen, toggleSidebar } = useSidebar();
   const { organization, team, role } = useActiveContext();
 
   return (
-    <header className="app-header">
+    <header className={cn("app-header", !isOpen && "is-nav-collapsed")}>
       <button
         type="button"
         className="app-header-menu"
         onClick={toggleSidebar}
-        aria-label={isOpen ? "Fechar menu" : "Abrir menu"}
+        aria-label={isOpen ? "Recolher menu" : "Abrir menu"}
         aria-expanded={isOpen}
       >
-        {isOpen ? <ChevronLeft size={18} /> : <Menu size={18} />}
+        <PanelLeft size={18} aria-hidden="true" />
       </button>
 
       <Link href="/" className="app-header-brand" aria-label="TimeOn, início">

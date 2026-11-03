@@ -203,3 +203,9 @@ Ainda para confirmar:
 4. **Menores (D4).** Entram, **com autorização dos pais e do técnico**. Falta desenhar onde a autorização é registrada (quem assina, validade, o que acontece sem ela) e revisar a política de privacidade para dado de menor.
 5. **Homologação (D5).** **Só o gestor** homologa o jogo (administração, como papel acima, também pode).
 6. **Modalidades (D6).** **Sempre separadas**: cada time tem a sua modalidade e nada mistura. Na visão da organização aparecem **todos os times**, agrupados por modalidade.
+
+### Ajuste sobre menores (2026-11-03, mesma conversa)
+
+- **Quem cadastra um menor:** só **técnico, gestor ou administração**. O menor **não cria o próprio registro** por link ou código.
+- **Jogador (maior de idade):** entra pelo **link de convite ou pelo código de convite** e cria o próprio registro.
+- Consequência técnica, **ainda não implementada**: a função do banco que deixa o jogador criar o próprio registro (`register_my_athlete`) precisa recusar menor de 18 anos, e o cadastro de menor passa só pelas funções da comissão (`register_athlete`, `add_athlete_to_team`), com a autorização dos pais e do técnico registrada. Mexer nisso é uma nova migration, que o dono aplica.

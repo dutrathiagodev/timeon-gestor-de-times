@@ -12,7 +12,7 @@ Ponto único para **entender, atualizar e melhorar** o sistema. Quem chegar (pes
 | Como o sistema é desenhado (atores, camadas, dados, fluxos) | [architecture/system-design.md](architecture/system-design.md) |
 | Stack, pastas e regras de código | [architecture/feature.spec.md](architecture/feature.spec.md) |
 | Proteção de dados e segurança | [architecture/feature.security.md](architecture/feature.security.md) |
-| Marca, cores, layout | [architecture/feature.design.md](architecture/feature.design.md) |
+| Marca, cores, layout | [architecture/feature.design.md](architecture/feature.design.md); Design System: [v1.1](architecture/design-system-v1.1.md) (vale) e [v1.0](architecture/design-system-v1.0.md) |
 | Regras das modalidades, gestão e avaliação de atleta | [domain/guia-modalidades-esportivas.md](domain/guia-modalidades-esportivas.md) |
 | O que o dono decidiu | [backlog/2026-11-02-decisoes-acesso-e-jogos.md](backlog/2026-11-02-decisoes-acesso-e-jogos.md) |
 | Ideias vindas de outras ferramentas | [backlog/2026-11-03-ideias-das-referencias.md](backlog/2026-11-03-ideias-das-referencias.md) |
@@ -40,7 +40,7 @@ O guia é a **fonte de verdade esportiva**, mas é feito para quem organiza comp
 
 Regras do guia que o código **já aplica**: formações variáveis por modalidade; posição principal e secundária; nota normalizada por posição (não compara atacante com zagueiro); alertas de categoria e de idade (sub); correção sem apagar (auditoria); dado sensível cifrado.
 
-Regras do guia que **ainda precisam virar código**: autorização de menor (pais e técnico); versão do regulamento por jogo; parâmetros por categoria (altura da rede, bola, tempo); impedimento de relacionar atleta suspenso; homologação separada do registro; número de camisa único por time quando o regulamento exigir.
+Regras do guia que **ainda precisam virar código**: autorização de menor (pais e técnico) e bloqueio do cadastro de menor por código de convite; versão do regulamento por jogo; parâmetros por categoria (altura da rede, bola, tempo); impedimento de relacionar atleta suspenso; homologação separada do registro; número de camisa único por time quando o regulamento exigir.
 
 ## 3. Como atualizar (por tipo de mudança)
 
@@ -82,6 +82,7 @@ Medir o sistema (guia, seção 15), quando houver dado: jogos no prazo, súmulas
 
 | Data | O que mudou |
 | --- | --- |
+| 2026-11-03 | Design System v1.1 aplicado como base provisória (tokens, Inter, faixa de título, menu recolhível só com o que existe, tabelas). Tema claro com tokens prontos, ainda não ligado. |
 | 2026-11-03 | Dono respondeu D1 a D6: sem controle de liga, família e torcida sem acesso, sem mensalidade, menores com autorização dos pais e do técnico, só o gestor homologa, modalidades sempre separadas. Financeiro saiu do menu. |
 | 2026-11-03 | Banco de produção aplicado (15 de 15). Formações: futsal 1-2-1, futebol 4-3-3 com laterais; seletor de esquema (PR #49). Moldura nova com troca de organização e time, menu por papel, gestão de acesso (esqueleto) e módulos "Em breve" (PRs #50 e #51). System design e este documento. |
 | 2026-11-02 | Decisões do dono sobre acesso, código do time, CPF, times por modalidade/categoria/faixa e jogos. Motor de jogo ao vivo, nota por modalidade, escalação visual e banco de acesso/atletas. |

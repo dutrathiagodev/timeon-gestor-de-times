@@ -98,7 +98,7 @@ O guia (seção 13) propõe um modelo centrado em **competição**. O TimeOn é 
 
 **Código do time**: `ativo → usado | revogado | expirado`. Papel fixo no código; código de comissão vale uma vez; 5 erros em 15 minutos travam.
 
-**Inscrição do atleta no time**: `rascunho → pendente → aprovado | recusado`, e `suspenso` por decisão disciplinar. **Atleta menor de idade** só fica `aprovado` com a autorização dos pais **e** do técnico registradas (D4).
+**Inscrição do atleta no time**: `rascunho → pendente → aprovado | recusado`, e `suspenso` por decisão disciplinar. **Atleta menor de idade** é cadastrado só por técnico, gestor ou administração (nunca por código de convite) e só fica `aprovado` com a autorização dos pais **e** do técnico registradas (D4).
 
 ## 6. Fluxos principais
 
@@ -156,7 +156,7 @@ Resolvidas pelo dono em 2026-11-03 (texto completo em [../backlog/2026-11-02-dec
 | D1 | Só organização e os times dentro dela. **Sem controle de liga**; jogo de liga é só um tipo de jogo no calendário |
 | D2 | Família e torcida sem acesso por enquanto; talvez no futuro |
 | D3 | Sem mensalidade por enquanto (Financeiro fora do menu) |
-| D4 | Menores entram com autorização dos pais e do técnico |
+| D4 | Menores entram com autorização dos pais e do técnico. **Só técnico, gestor ou administração cadastram o menor**; o jogador maior de idade cria o próprio registro por link ou código de convite |
 | D5 | Só o gestor homologa o jogo |
 | D6 | Modalidades sempre separadas; a visão da organização mostra todos os times, agrupados por modalidade |
 

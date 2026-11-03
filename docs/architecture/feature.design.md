@@ -2,6 +2,8 @@
 
 Marca e sistema visual do TimeOn, derivados da logo. Toda cor, fonte e forma do site nasce daqui. Segue [feature.spec.md](feature.spec.md) (estrutura) e [feature.security.md](feature.security.md) (dados).
 
+> **Design System vigente: v1.1** ([design-system-v1.1.md](design-system-v1.1.md), direção de evolução, enviado pelo dono em 2026-11-03). A [v1.0](design-system-v1.0.md) fica como referência de componentes e acessibilidade; onde divergirem (cor laranja `#FF641A`, menos cartões, faixa de título compacta, menu só com o que existe), vale a v1.1. Fonte da marca: Inter no lugar de Sora na interface; o logo continua o mesmo.
+
 > Fonte da verdade da marca: o desenho da logo (arquivo "TimeOn" no Claude Design). Este documento descreve como ela vira codigo. O layout das telas e provisorio (moldura base do card 00046) e sera redesenhado depois; marca, cor e fonte ja valem.
 
 ## Marca
@@ -108,3 +110,17 @@ Criada para ter onde pendurar as telas multi-esporte; o desenho final vem em out
 - Acabamento: scrolls escuros, foco visivel, "Ir para o conteudo", selos "Em breve", alvos de toque de 44 px.
 - Inicio (`/`): escolha de organizacao e lista de times por modalidade; "Criar time" so aparece para administracao, gestor e tecnico (hoje desligado, "em breve"); "Entrar com codigo" idem.
 - `src/lib/teams.ts`: de onde vem a lista. **Hoje e fixa** (so o time de volei do modelo antigo); troca pela leitura do banco novo nos cards 00042 e 00043.
+
+## Design System v1.1 aplicado (base provisória)
+
+Primeira aplicação, feita em 2026-11-03; o dono vai refinar depois.
+
+- **Tokens** em `src/app/globals.css` (`:root` e `[data-theme="dark"|"light"]`): `--color-brand`, `--color-bg`, `--color-surface`, `--color-surface-soft`, `--color-border`, `--color-text*`, semânticas, `--radius-sm|md|lg|xl`. Os nomes antigos (`--surface`, `--border`, `--brand`...) apontam para eles, então as telas antigas já usam a paleta nova.
+- **Tema escuro** é o ativo. Os tokens do **tema claro estão prontos**, mas **não ligados**: as telas antigas (painel, atletas, jogos, estatísticas, escalação, login) ainda têm cores escuras escritas direto no CSS. Antes de ligar o tema claro é preciso migrá-las para os tokens.
+- **Fonte:** Inter (`next/font`), números tabulares.
+- **Faixa de título compacta** (`TopBar`): etiqueta de contexto, título 28/650, frase curta e uma ação; sem banner.
+- **Menu lateral** recolhível (216 px / 68 px em ícones), com o logo no topo e só os itens que existem para o papel. Módulo sem tela não aparece no menu.
+- **Tabelas** (`.data-table`) para dados comparáveis (times por modalidade, pessoas e papéis); em tela pequena escondem colunas opcionais (`.col-optional`).
+- **Botões** de 40 px, primário laranja liso com texto escuro (contraste), secundário com borda; **cartões** só com superfície e borda de 1 px, sem sombra.
+- **Foco visível** laranja, "Ir para o conteúdo", `prefers-reduced-motion`, alvos de 40 a 44 px.
+- **Ainda falta** migrar as telas antigas para os tokens e para o padrão de faixa/tabela, ligar o tema claro, e criar os estados de carregamento, erro e sucesso padronizados (toast).
