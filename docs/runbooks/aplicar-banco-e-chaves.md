@@ -16,6 +16,17 @@ As migrations novas **só criam objetos novos** e não mexem nas três tabelas a
 
 O pacote de 12 migrations foi colado no SQL Editor do `plataforma-gestao-time` (`Success. No rows returned`) e o verificador `supabase/verify/after-apply.sql` deu **15 de 15 `OK`**. O que resta deste roteiro é a parte das **chaves** (passo 5), a **política** (passo 6) e a conferência manual do painel (passo 4). Os passos 1 a 3 só precisam ser repetidos para migrations futuras (`--from <versão>` gera o pacote só com as novas).
 
+## Aviso: a integração com o GitHub (aprendido em 2026-11-03)
+
+O projeto Supabase está conectado a este repositório. Duas configurações dela importam:
+
+- **Branches por PR: desligadas.** Nos PRs o check `Supabase Preview` aparece como `skipped` ("Creating a new preview branch per PR is disabled"). Nada a fazer, e sem custo.
+- **"Deploy to production": precisa ficar DESLIGADO.** Com ela ligada, todo push no `main` tenta aplicar as migrations do repositório no banco de produção, a partir da mais antiga. Como o banco foi montado à mão e não tem `supabase_migrations`, ela **para na primeira** (`ERROR: policy "Autenticados gerenciam jogadores" for table "jogadores_leilao" already exists`) e **não aplica nada**: o check `Supabase Preview` fica vermelho no `main`, e só.
+
+Isso é inofensivo hoje, mas se o histórico de migrations for "consertado" de um jeito que a deixe passar do começo, ela passaria a aplicar migrations em produção sozinha, sem o verificador e sem você olhar. Por isso: *Project Settings → Integrations → GitHub* e desligue "Deploy to production" (ou desconecte o repositório; nada neste roteiro precisa da integração).
+
+**Como saber que está certo:** depois de desligar, o check `Supabase Preview` deixa de ficar vermelho no `main` (aparece `skipped` ou some). Se um dia ele aparecer **verde** num push no `main`, ele aplicou alguma coisa: investigue.
+
 ## 0. Antes de começar
 
 Rode os testes locais (precisa de Docker). Tudo precisa passar:
