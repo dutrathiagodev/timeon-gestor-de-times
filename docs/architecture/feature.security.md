@@ -78,11 +78,22 @@ Decisoes em `docs/backlog/2026-11-02-decisoes-acesso-e-jogos.md`.
 - `audit_events` e so de insercao (gatilho barra update e delete) e nunca recebe o codigo. Leitura so para admin.
 - Todas as escritas desse fluxo passam por funcoes `SECURITY DEFINER` com `search_path` vazio; as tabelas nao tem INSERT, UPDATE nem DELETE para o cliente (exceto remover jogador, por gestor ou admin).
 
+## Atletas e CPF (task 00025)
+
+- Um cadastro por pessoa (`athletes`, com sexo e nascimento) e **um perfil esportivo por time** (`team_members`: posicao validada por `sport_positions`, camisa unica por time, status). Sexo e nascimento so admin e gestor corrigem; a pessoa nao muda depois de inscrita.
+- **CPF so existe em claro na memoria do servidor** (`src/lib/cpf.ts`). No banco ficam o texto cifrado (AES-256-GCM, 40 bytes: versao, IV, tag e conteudo, com o id do atleta como dado autenticado) e um indice cego (HMAC-SHA-256 com o id da organizacao) para achar duplicado sem decifrar.
+- Chaves so em variavel de ambiente do servidor (Vercel), nunca no repositorio nem no navegador: `CPF_ENCRYPTION_KEYS` (JSON versao para chave de 32 bytes em base64), `CPF_KEY_VERSION` e `CPF_HASH_KEY` (base64, 32 bytes ou mais). Rotacao: acrescente a chave nova, mude `CPF_KEY_VERSION` e recifre aos poucos; as antigas continuam decifrando. Trocar `CPF_HASH_KEY` obriga recalcular todos os indices.
+- `athlete_private` nao tem policy nem grant: so as funcoes `set_athlete_private`, `read_athlete_private`, `find_athlete_by_cpf_index` e `delete_athlete_private` acessam. O tamanho fixo (40 e 32 bytes) barra CPF em claro.
+- **Toda leitura do CPF e gravada em `audit_events` na mesma transacao**, antes de devolver. Leitura negada nao grava. A auditoria nunca guarda CPF, indice, telefone nem nome.
+- Quem acessa o CPF: a propria pessoa, admin da organizacao, gestor de um time em que a pessoa joga e quem cadastrou a pessoa (se ainda e admin ou gestor). **Tecnico nunca.** Apagar: so admin ou a propria pessoa.
+- Armadilha ja vista: funcao booleana que devolve nulo para quem nao tem papel (`org_staff_role(...) = 'manager'`). Em `if ... or not funcao(...)` o nulo nao barra ninguem. Use `coalesce(..., false)` e teste o caso sem vinculo.
+
 ## Checklist de PR
 
 - [ ] Tabela nova tem RLS e policy `TO authenticated`
 - [ ] Policy nova usa `private.can_*` / `has_org_role` e tem teste em `supabase/tests/`
 - [ ] Tabela com segredo (hash, chave) nao concede SELECT na coluna secreta ao cliente
+- [ ] Funcao de permissao usada em `if not ...` nunca devolve nulo (teste o usuario sem vinculo)
 - [ ] Recurso novo esta em `resources` com colunas minimas
 - [ ] Rota nova chama `authorize()` e usa `pickFields`
 - [ ] Nenhum `createBrowserClient` ou chave secreta no cliente

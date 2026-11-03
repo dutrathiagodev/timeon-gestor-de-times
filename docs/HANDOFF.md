@@ -17,9 +17,10 @@ Documento de passagem: qualquer pessoa ou agente que assumir o repositório deve
 |---|---|
 | Site em produção | marca TimeOn (logo, Sora, laranja/grafite), login com 2FA TOTP, painel com design antigo |
 | Segurança | RLS só `authenticated`, anon sem privilégios, API com allowlist/CSRF/2FA, fotos privadas com URL assinada, `npm audit` 0 |
-| Fundação multi-time (00017) e acesso (00024) | migrations (fundação e `*_access_*`: gestor, time único por esporte+categoria+faixa, criar time, código do time com aceite, auditoria) e 124 verificações de RLS prontas; **não aplicadas ao banco de produção** |
+| Fundação multi-time (00017) e acesso (00024) | migrations (fundação e `*_access_*`: gestor, time único por esporte+categoria+faixa, criar time, código do time com aceite, auditoria) e 216 verificações de RLS prontas; **não aplicadas ao banco de produção** |
 | Layout novo | aguardando o usuário (card 00031) |
 | Plano multi-esporte | decisões do dono registradas em `docs/backlog/2026-11-02-decisoes-acesso-e-jogos.md` (papéis, CPF seguro, convite por código, jogos); faltam 4 confirmações na seção 8 do documento |
+| Atletas e CPF (00025) | migrations `*_athletes_*` (atletas, perfil por time, CPF cifrado com leitura auditada) e `src/lib/cpf.ts`; **não aplicadas ao banco de produção**. Nenhuma sessão de IA aplica migration: o dono aplica no Supabase do projeto (o conector da sessão vê outra conta) |
 | Código novo sem uso nas telas | `src/sports` (registro, OVR, ajuste do treinador, escalação) e componentes `rating-card` e `lineup-board`; ligar às telas depende do banco novo e do layout (00031) |
 
 Backlog (cards 00017 a 00028) em `docs/backlog/2026-10-30-gestor-multi-esporte.md` (+ `-flow.html` e `-scheme.html`). Próximo passo técnico: **00018, registro de esportes em `src/sports`**.
