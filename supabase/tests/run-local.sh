@@ -22,3 +22,10 @@ for test in foundation_rls access_rls athletes_rls grants_audit; do
   fi
   echo "$out" | grep -E "^NOTICE:  ok|TODOS|PASSOU"
 done
+# O verificador que o dono roda no Supabase de verdade tambem tem de passar aqui.
+verify=$(psql_run -A -t -F ' | ' < supabase/verify/after-apply.sql)
+echo "$verify" | grep -c "| OK |" | xargs -I{} echo "verificador: {} checagens OK"
+if echo "$verify" | grep -q "| FALHOU |"; then
+  echo "$verify" | grep "| FALHOU |"
+  exit 1
+fi
