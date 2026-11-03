@@ -56,6 +56,17 @@ describe("registro de esportes", () => {
       }
     });
 
+    it("slots ficam a 7% ou mais da borda, para o botão do atleta não vazar do campo", () => {
+      for (const formation of sport.formations) {
+        for (const slot of formation.slots) {
+          for (const value of [slot.x, slot.y]) {
+            expect(value).toBeGreaterThanOrEqual(7);
+            expect(value).toBeLessThanOrEqual(93);
+          }
+        }
+      }
+    });
+
     it("cada formação escala exatamente os atletas em jogo (líbero à parte)", () => {
       for (const formation of sport.formations) {
         const onField = formation.slots.filter((s) => s.positionHint !== "libero");

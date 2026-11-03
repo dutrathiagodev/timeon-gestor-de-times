@@ -1909,7 +1909,7 @@ textarea.form-input {
 }
 
 .board-volleyball {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 5 / 4;
   border-color: #8f582e;
   background: linear-gradient(180deg, #c2783d, #d68f53);
 }

@@ -38,8 +38,8 @@ describe("LineupBoard", () => {
 
   it("posiciona os slots pelas coordenadas da formação", () => {
     const html = render("volleyball");
-    expect(html).toContain("left:83%;top:75%");
-    expect(html).toContain("left:17%;top:25%");
+    expect(html).toContain("left:83%;top:64%");
+    expect(html).toContain("left:17%;top:24%");
   });
 
   it("slot vazio e preenchido têm rótulo acessível", () => {
